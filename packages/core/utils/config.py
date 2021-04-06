@@ -8,6 +8,6 @@ class Config(metaclass=SingletonClass):
         if not self._config_:
             config_db_file = r"./storage/config_db.yaml"
             with open(config_db_file, "r") as stream:
-                config_db = yaml.load(stream)
+                config_db = yaml.safe_load(stream)
             self._config_ = config_db
         return self._config_

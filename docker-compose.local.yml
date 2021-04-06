@@ -1,0 +1,47 @@
+version: "3"
+
+volumes:
+  local_postgres_data:
+  local_postgres_data_backups:
+
+services:
+  scraper:
+    depends_on:
+      - proxy
+      - postgres
+    build:
+      context: .
+      dockerfile: ./docker/local/scraper/Dockerfile
+    image: myproject_local_scraper
+    volumes:
+      - .:/app
+    env_file:
+      - ./.envs/.local/.postgres
+    labels:
+      - traefik.docker.network=scraper-proxy-net
+      - traefik.http.routers.scraper.rule=(Host(`ems.myproject.local`))
+      - "traefik.http.services.scraper.loadbalancer.server.port=8000"
+    networks:
+      db-net:
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./docker/production/postgres/Dockerfile
+    image: myproject_production_postgres
+    networks:
+      db-net:
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data
+      - local_postgres_data_backups:/backups
+    env_file:
+      - ./.envs/.local/.postgres
+
+  proxy:
+    labels:
+      - traefik.docker.network=scraper-proxy-net
+    volumes:
+      - ./docker/local/traefik/config.yml:/traefik.yml
+
+networks:
+  db-net:

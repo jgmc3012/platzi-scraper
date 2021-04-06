@@ -5,16 +5,16 @@ from .ctrls import CtrlBaseScraper
 
 class AllCommands:
 
-    class ScraperPyppeteerPage(Command):
+    class ScraperPage(Command):
         """
         Navega hasta una pagina determida y obtiene el valor de body
 
         scraper:save_page
-        {--url= : url}
+        {url : url}
         """
 
         def handle(self):
-            url = self.option('url')
+            url = self.argument('url')
             AppLoop().get_loop().run_until_complete(
                 CtrlBaseScraper().save_page(url)
             )

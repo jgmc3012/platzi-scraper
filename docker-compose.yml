@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  scraper:
+    depends_on:
+      - proxy
+    command: /start
+    networks:
+      scraper-proxy-net:
+
+  proxy:
+    image: traefik:v2.4
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      scraper-proxy-net:
+
+networks:
+  scraper-proxy-net:
+    external: true
+  db-net:

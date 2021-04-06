@@ -13,6 +13,7 @@ import concurrent
 from random import randint
 
 class WebClient(metaclass=Singleton):
+
     def __init__(self, *args, **kwargs):
         self.all_sessions = None
         self.lock = asyncio.Lock()

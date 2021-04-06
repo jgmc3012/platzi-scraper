@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# scraper
+echo 'Runing migrations'
+python manage.py migrate
+
+echo 'Loading ICD-10 Diagnostics'
+python manage.py load_icd10
+echo 'Loaded ICD-10 Diagnostics'
+echo 'Loading ICD-10 Symptoms'
+python manage.py load_icd10_symptoms
+echo 'Loaded ICD-10 Symptoms'
+python manage.py loaddata service_types.json status.json triague_question.json \
+    service_status_base.json locations.json dni_types.json plans.json
+python manage.py loaddata service_types.json status.json service_status_base.json dni_types.json \
+ locations.json plans.json triague_question.json base-groups.json test_types.json
+
+python manage.py runserver 0.0.0.0:8000
