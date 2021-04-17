@@ -1,7 +1,7 @@
 venv
 env
-storage/*
-!storage/.gitkeep
+**/storage/*
+**/!storage/.gitkeep
 .vscode
 *__pycache__
 __pycache__

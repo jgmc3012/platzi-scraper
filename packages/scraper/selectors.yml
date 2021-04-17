@@ -1,0 +1,45 @@
+category:
+  path_base: "/cursos/"
+
+  paths:
+    multiple: True
+    xpath: "//a[@class='CourseCategories-item']/@href"
+
+  names:
+      multiple: True
+      xpath: "//div[@class='CourseCategories-courses']/h2/text()"
+
+learning_path:
+  paths:
+    multiple: True
+    xpath: "//a[@class='RoutesList-item']/@href"
+
+  names:
+      multiple: True
+      xpath: "//h4[@class='RoutesList-item-name']/text()"
+
+courses:
+  paths:
+      multiple: True
+      xpath: "//a[@class='LearningPathItem']/@href"
+
+  names:
+      multiple: True
+      xpath: "//div[@class='LearningPathItem-elements']/h2/text()"
+
+review:
+  user_profile:
+      multiple: True
+      xpath: "//a[@class='ReviewCard-username']/@href"
+
+  body:
+      multiple: True
+      xpath: "//p[@class='ReviewCard-description']/text()"
+
+  full_stars:
+      multiple: True
+      xpath: "//div[@class='ReviewsContent']//article[@class='ReviewCard' and position() = {review_number} ]//div[@class='Stars']/*[@data-prefix='fas' and @data-icon='star']"
+
+  half_star:
+      multiple: False
+      xpath: "//div[@class='ReviewsContent']//article[@class='ReviewCard' and position() = {review_number} ]//div[@class='Stars']/*[@data-icon='star-half-alt']"

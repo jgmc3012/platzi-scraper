@@ -12,14 +12,14 @@ services:
     build:
       context: .
       dockerfile: ./docker/local/scraper/Dockerfile
-    image: myproject_local_scraper
+    image: platzi_scraper_local_scraper
     volumes:
       - .:/app
     env_file:
       - ./.envs/.local/.postgres
     labels:
       - traefik.docker.network=scraper-proxy-net
-      - traefik.http.routers.scraper.rule=(Host(`ems.myproject.local`))
+      - traefik.http.routers.scraper.rule=(Host(`platzi-scraper.jgmc3012.local`))
       - "traefik.http.services.scraper.loadbalancer.server.port=8000"
     networks:
       db-net:
@@ -28,7 +28,7 @@ services:
     build:
       context: .
       dockerfile: ./docker/production/postgres/Dockerfile
-    image: myproject_production_postgres
+    image: platzi_scraper_production_postgres
     networks:
       db-net:
     volumes:

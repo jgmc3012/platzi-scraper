@@ -1,4 +1,4 @@
-title="MyProject - Localhost"
+title="platzi-scraper - Localhost"
 
 echo "$title"
 docker network create --driver=bridge scraper-proxy-net

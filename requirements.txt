@@ -10,3 +10,9 @@ aiohttp==3.7.4
 
 # Asyncio
 uvloop==0.15.2
+
+# Database
+tortoise-orm[asyncpg]==0.17.2
+
+# Scraper
+lxml==4.6.3
