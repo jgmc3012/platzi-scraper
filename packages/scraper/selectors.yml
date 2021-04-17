@@ -9,7 +9,7 @@ category:
       multiple: True
       xpath: "//div[@class='CourseCategories-courses']/h2/text()"
 
-learning_path:
+courses:
   paths:
     multiple: True
     xpath: "//a[@class='RoutesList-item']/@href"
@@ -18,7 +18,7 @@ learning_path:
       multiple: True
       xpath: "//h4[@class='RoutesList-item-name']/text()"
 
-courses:
+learning_path:
   paths:
       multiple: True
       xpath: "//a[@class='LearningPathItem']/@href"

@@ -1,7 +1,7 @@
 from cleo import Command
 from packages.core.utils.app_loop import AppLoop
 
-from .ctrls import CtrlBaseScraper, CategoriesScraper, CoursesScraper
+from .ctrls import CtrlBaseScraper, CategoriesScraper, LearningPathScraper, CoursesScraper
 
 class AllCommands:
 
@@ -33,6 +33,19 @@ class AllCommands:
 
 
     class ScraperPathLearn(Command):
+        """
+        Scraper platzi learning paths
+
+        scraper:platzi_learning_paths
+        """
+
+        def handle(self):
+            AppLoop().get_loop().run_until_complete(
+                LearningPathScraper().run()
+            )
+
+
+    class ScraperCourse(Command):
         """
         Scraper platzi courses
 
