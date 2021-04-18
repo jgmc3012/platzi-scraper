@@ -1,7 +1,9 @@
-import csv
-from packages.core.scraper.ctrls  import CtrlBaseScraper
-from .page_objects import CareersPage
 import logging
+from packages.core.scraper.ctrls  import CtrlBaseScraper
+from packages.categories.models import Category
+
+from .page_objects import CareersPage
+from .models import Career
 
 
 logger = logging.getLogger('log_print')
@@ -10,19 +12,20 @@ logger = logging.getLogger('log_print')
 class CareersScraper(CtrlBaseScraper):
 
     async def run(self):
-        with open(f'{self.WORK_DIR}/storage/categories.csv', 'r') as f:
-            reader = csv.DictReader(f)
-            coros = [self.scraper_career(row['name'], row['path']) for row in reader]
+        await categories = Category.all()
+        coros = [self.scraper_career(category) for category in categories]
 
-        careers = await asyncio.gather(*coros)
+        await asyncio.gather(*coros)
 
-    async def scraper_career(self, category_name, category_path):
-        url = self.URL_BASE + category_path
+    async def scraper_career(self, category: Category):
+        url = self.URL_BASE + category.path
         html = await self.visit_page(url)
         career = CareersPage(html, url)
-        with open(f'{self.WORK_DIR}/storage/career_{category_name}.csv', 'w+') as f:
-            writer = csv.writer(f, delimiter=',')
-            logger.info(f"Saving data from {url}")
-            writer.writerow(('category_name' ,'name', 'path'))
-            for row in zip(career.names, career.paths):
-                writer.writerow((category_name, *row))
+        logger.info(f"Saving data from {url}")
+        for row in zip(career.names, career.paths):
+            logger.info(f"Get or create Career {row[0]}")
+            Career.get_create(
+                name=row[0],
+                path=row[1],
+                category=category,
+            )

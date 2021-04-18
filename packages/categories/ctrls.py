@@ -1,7 +1,8 @@
 import csv
+import logging
 from packages.core.scraper.ctrls  import CtrlBaseScraper
 from .page_objects import CategoriesPage
-import logging
+from .models import Category
 
 
 logger = logging.getLogger('log_print')
@@ -12,9 +13,10 @@ class CategoriesScraper(CtrlBaseScraper):
     async def run(self):
         url = self.URL_BASE + '/cursos/'
         html = await self.visit_page(url)
-        categories = CategoriesPage(html, url)
-        with open(f'{self.WORK_DIR}/storage/categories.csv', 'w+') as f:
-            writer = csv.writer(f, delimiter=',')
-            writer.writerow(('name', 'path'))
-            for row in zip(categories.names, categories.paths):
-                writer.writerow(row)
+        categories_page = CategoriesPage(html, url)
+        for row in zip(categories_page.names, categories_page.paths):
+            logger.info(f"Get or create Category {row[0]} on DB")            
+            await Category.get_or_create(
+                name=row[0],
+                path=row[1],
+            )

@@ -10,5 +10,5 @@ if __name__ == '__main__':
     AppLoop()
     ModuleManager().import_commands(application)
     Logger()
-    run_async(init_db())
+    AppLoop().get_loop().run_until_complete(init_db())
     application.run()

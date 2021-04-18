@@ -21,7 +21,7 @@ import socket
 async def try_connect():
     try:
         conn = await asyncpg.connect("${DATABASE_URL}")
-    except socket.gaierror:
+    except:
         sys.exit(-1)
     await conn.close()
     sys.exit(0)
