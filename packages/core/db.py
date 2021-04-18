@@ -9,6 +9,7 @@ async def init_db():
             'packages.categories.models',
             'packages.careers.models',
             'packages.courses.models',
+            'packages.users.models',
             ]
         }
     )

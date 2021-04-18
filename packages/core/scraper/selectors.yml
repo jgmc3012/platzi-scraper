@@ -18,7 +18,7 @@ courses:
       multiple: True
       xpath: "//h4[@class='RoutesList-item-name']/text()"
 
-learning_path:
+careers:
   paths:
       multiple: True
       xpath: "//a[@class='LearningPathItem']/@href"
@@ -27,7 +27,7 @@ learning_path:
       multiple: True
       xpath: "//div[@class='LearningPathItem-elements']/h2/text()"
 
-review:
+reviews:
   user_profile:
       multiple: True
       xpath: "//a[@class='ReviewCard-username']/@href"
