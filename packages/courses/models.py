@@ -3,7 +3,5 @@ from tortoise import fields
 
 class Course(Model):
     id = fields.IntField(pk=True)
-    name = fields.CharField(max_length=255)
-
-    def __str__(self):
-        return self.name
+    name = fields.TextField()
+    path = fields.TextField()
