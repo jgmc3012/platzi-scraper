@@ -12,7 +12,7 @@ logger = logging.getLogger('log_print')
 class CareersScraper(CtrlBaseScraper):
 
     async def run(self):
-        await categories = Category.all()
+        categories = await Category.all()
         coros = [self.scraper_career(category) for category in categories]
 
         await asyncio.gather(*coros)
