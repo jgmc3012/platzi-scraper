@@ -1,4 +1,3 @@
-import csv
 import logging
 from packages.core.scraper.ctrls  import CtrlBaseScraper
 from .page_objects import CategoriesPage
