@@ -2,8 +2,6 @@ version: '3'
 
 services:
   scraper:
-    depends_on:
-      - proxy
     command: /start
     networks:
       scraper-proxy-net:
