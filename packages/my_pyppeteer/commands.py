@@ -11,13 +11,13 @@ class AllCommands:
 
         pyppeteer:open_browser
         {--args= : nothing extra by default}
-        {--headless= : headless =0 by default}
+        {--headless= : headless =1 by default}
         {--profile-name= : profile-name}
         """
 
         def handle(self):
 
-            headless = bool(self.option('headless'))
+            headless = not bool(self.option('headless'))
             profile_name = self.option('profile-name')
             args = self.option('args')
             if args:

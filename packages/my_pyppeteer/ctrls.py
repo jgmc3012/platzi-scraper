@@ -141,7 +141,7 @@ class MyPyppeteer(metaclass=SingletonClass):
                             raise Exception(f'please, open pyppetter before, profile:{self.profile}, old_ws:{self.ws}, new_ws=None')
 
         if not self.browser:
-            default_parrameters = {'headless': False, 'args': ['--no-sandbox'] + self.flags}
+            default_parrameters = {'headless': True, 'args': ['--no-sandbox'] + self.flags}
             default_parrameters.update(kwargs)
             kwargs = default_parrameters
             if self.profile:
@@ -231,18 +231,18 @@ class MyPyppeteer(metaclass=SingletonClass):
         # https://github.com/GoogleChrome/chrome-launcher/blob/master/docs/chrome-flags-for-tools.md
 
         extra_args = kwargs.pop('args', [])
-        default_parrameters = {'headless': False, 'args': ['--no-sandbox', '--disable-setuid-sandbox'] + self.flags + extra_args}
+        default_parrameters = {'headless': True, 'args': ['--no-sandbox', '--disable-setuid-sandbox'] + self.flags + extra_args}
 
         self.profile = kwargs.pop('profile_name', None)
         if self.profile:
             kwargs['userDataDir'] = await self.get_profile_dir()
 
         default_parrameters.update(kwargs)
-        self.browser = await launch(**default_parrameters)
+        self.browser = await launch(options=default_parrameters)
         self.oppener = True
         return await self.get_conenction(daemon)
 
-    async def newPage(self, headless=False):
+    async def newPage(self, headless=True):
         for _ in range(10):
             count_tabs = len(await self.browser.pages())
             if count_tabs < self.max_opened_tabs:
