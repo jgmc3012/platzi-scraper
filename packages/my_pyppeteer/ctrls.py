@@ -231,14 +231,14 @@ class MyPyppeteer(metaclass=SingletonClass):
         # https://github.com/GoogleChrome/chrome-launcher/blob/master/docs/chrome-flags-for-tools.md
 
         extra_args = kwargs.pop('args', [])
-        default_parrameters = {'headless': True, 'args': ['--no-sandbox', '--disable-setuid-sandbox'] + self.flags + extra_args}
+        default_parrameters = {'headless': False, 'args': ['--no-sandbox', '--disable-setuid-sandbox'] + self.flags + extra_args}
 
-        self.profile = kwargs.pop('profile_name', None)
+        self.profile = kwargs.pop('profile_name', self.profile)
         if self.profile:
             kwargs['userDataDir'] = await self.get_profile_dir()
 
-        default_parrameters.update(kwargs)
-        self.browser = await launch(options=default_parrameters)
+        # default_parrameters.update(kwargs)
+        self.browser = await launch(**default_parrameters)
         self.oppener = True
         return await self.get_conenction(daemon)
 

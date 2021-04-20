@@ -1,5 +1,6 @@
 import logging
-from packages.core.scraper.ctrls  import CtrlBaseScraper
+import asyncio
+from packages.core.scraper.ctrls  import CtrlPyppetterScraper
 from packages.categories.models import Category
 
 from .page_objects import CareersPage
@@ -9,7 +10,7 @@ from .models import Career
 logger = logging.getLogger('log_print')
 
 
-class CareersScraper(CtrlBaseScraper):
+class CareersScraper(CtrlPyppetterScraper):
 
     async def run(self):
         categories = await Category.all()
@@ -24,7 +25,7 @@ class CareersScraper(CtrlBaseScraper):
         logger.info(f"Saving data from {url}")
         for row in zip(career.names, career.paths):
             logger.info(f"Get or create Career {row[0]}")
-            Career.get_create(
+            await Career.get_or_create(
                 name=row[0],
                 path=row[1],
                 category=category,

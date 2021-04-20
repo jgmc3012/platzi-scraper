@@ -1,5 +1,5 @@
 import logging
-from packages.core.scraper.ctrls  import CtrlBaseScraper
+from packages.core.scraper.ctrls  import CtrlPyppetterScraper
 from .page_objects import CategoriesPage
 from .models import Category
 
@@ -7,7 +7,7 @@ from .models import Category
 logger = logging.getLogger('log_print')
 
 
-class CategoriesScraper(CtrlBaseScraper):
+class CategoriesScraper(CtrlPyppetterScraper):
 
     async def run(self):
         url = self.URL_BASE + '/cursos/'

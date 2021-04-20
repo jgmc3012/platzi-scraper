@@ -24,7 +24,7 @@ class AllCommands:
                 args = args.split(',')
             else:
                 args = []
-            AppLoop().get_loop().run_until_complete(MyPyppeteer().open_browser(headless=headless, profile_name=profile_name, args=args))
+            AppLoop().get_loop().run_until_complete(MyPyppeteer().open_browser(headless=headless, args=args))
 
     class CommandCountPages(Command):
         """

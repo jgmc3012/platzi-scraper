@@ -1,6 +1,6 @@
 import logging
-
-from packages.core.scraper.ctrls  import CtrlBaseScraper
+import asyncio
+from packages.core.scraper.ctrls  import CtrlPyppetterScraper
 from packages.careers.models import Career
 
 from .page_objects import CoursesPage
@@ -10,9 +10,10 @@ from .models import Course
 logger = logging.getLogger('log_print')
 
 
-class CoursesScraper(CtrlBaseScraper):
+class CoursesScraper(CtrlPyppetterScraper):
 
     async def run(self):
+        careers = await Career.all()
         coros = [self.scraper_courses(career) for career in careers]
         await asyncio.gather(*coros)
 
@@ -27,5 +28,5 @@ class CoursesScraper(CtrlBaseScraper):
                 name=row[0],
                 path=row[1],
             )
-            logger.info(f"Linked course({row[0]}) to career({carrer}) ")
+            logger.info(f"Linked course({row[0]}) to career({career}) ")
             await course.careers.add(career)
