@@ -77,8 +77,18 @@ class CtrlPyppetterScraper:
     USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0"
     URL_BASE = "https://platzi.com"
 
-    def __init__(self, sem:int=4):
+    def __init__(self, sem:int=3):
         self.sem = asyncio.Semaphore(sem)
+        self.lock = asyncio.locks.Lock()
+        self.number_pages = sem
+        self.running_client = False
+
+    async def init_client(self):
+        """Init pool tabs"""
+        async with self.lock:
+            if not self.running_client:
+                self.running_client = True
+                await self.client.init_pool_pages(self.number_pages)
 
     async def visit_page(self, url:str):
         """
@@ -86,20 +96,26 @@ class CtrlPyppetterScraper:
 
         Visit the url and return the body html
         """
-        if not self.client.browser:
-            await self.client.connect_browser()
         while True:
             async with self.sem:
                 logger.info(f'Visit to page {url}')
-                page = await self.client.newPage()
+                page_id, page = self.client.get_page_pool()
                 await page.goto(url)
+                await asyncio.sleep(1.5)
                 html = await page.content()
                 if 'Maintance-logo' not in html:
-                    await page.close()
+                    self.client.close_page_pool(page_id)
                     return html
                 logger.warning(f'Reloading {url}...')
                 await self.save_page(url, html)
                 await asyncio.sleep(2)
+
+    async def close_client(self):
+        """Close pool tabs"""
+        async with self.lock:
+            if self.running_client:
+                self.running_client = False
+                await self.client.close_pool(self.number_pages)
 
     async def save_page(self, url, html=''):
         if not html:

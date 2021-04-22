@@ -14,9 +14,10 @@ class CareersScraper(CtrlPyppetterScraper):
 
     async def run(self):
         categories = await Category.all()
+        await self.init_client()
         coros = [self.scraper_career(category) for category in categories]
-
         await asyncio.gather(*coros)
+        await self.close_client()
 
     async def scraper_career(self, category: Category):
         url = self.URL_BASE + category.path

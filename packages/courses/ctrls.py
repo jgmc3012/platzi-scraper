@@ -13,9 +13,11 @@ logger = logging.getLogger('log_print')
 class CoursesScraper(CtrlPyppetterScraper):
 
     async def run(self):
+        await self.init_client()
         careers = await Career.all()
         coros = [self.scraper_courses(career) for career in careers]
         await asyncio.gather(*coros)
+        await self.close_client()
 
     async def scraper_courses(self, career: Career):
         url = self.URL_BASE + career.path

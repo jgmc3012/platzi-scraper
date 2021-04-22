@@ -10,6 +10,7 @@ logger = logging.getLogger('log_print')
 class CategoriesScraper(CtrlPyppetterScraper):
 
     async def run(self):
+        await self.init_client()
         url = self.URL_BASE + '/cursos/'
         html = await self.visit_page(url)
         categories_page = CategoriesPage(html, url)
@@ -19,3 +20,4 @@ class CategoriesScraper(CtrlPyppetterScraper):
                 name=row[0],
                 path=row[1],
             )
+        await self.close_client()
