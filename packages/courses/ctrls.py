@@ -1,7 +1,7 @@
 import logging
 import asyncio
 from more_itertools import chunked
-from tortoise.exceptions import DoesNotExist
+from tortoise.exceptions import DoesNotExist, IntegrityError
 from packages.core.scraper.ctrls  import CtrlPyppetterScraper
 from packages.careers.models import Career
 from packages.users.models import  User
@@ -71,28 +71,46 @@ class ReviewsScraper(CtrlPyppetterScraper):
         url = f'{self.URL_BASE}{course.path}opiniones/{page}/'
         html = await self.visit_page(url)
         reviews = ReviewsPage(html, url)
-        logger.info(f"Saving data from {url}")
+        logger.info(f"Scraping data from {url}")
         if len(reviews.user_profiles) != 30:
             logger.warning(f"Review this page: {url}")
         for row in zip(reviews.user_profiles, reviews.bodies, reviews.stars):
             username = self.get_username_from_profile_path(row[0])
             logger.debug(f"Get or create Review by {username}")
-            user, created = await User.get_or_create(
-                username=username
-            )
+
+            # Create User
+            try:
+                user = await User.get(
+                    username=username
+                )
+            except DoesNotExist:
+                try:
+                    user = await User.create(
+                        username=username
+                    )
+                    logger.info(f"User({user}) created")
+                    logger.debug(f"User Exist - ({username})")
+                except IntegrityError as err:
+                    logger.error(f"{err} - Cant Create User ({username})")
+
+            # Create Review
             try:
                 await Review.get(
                     course=course,
                     user=user,
                 )
+                logger.info(f"Review Exist - User ({user}) to course({course}) ")
             except DoesNotExist:
-                await Review.create(
-                    course=course,
-                    user=user,
-                    comment=row[1],
-                    stars=row[2]
-                )
-                logger.info(f"Linked user({user}) to course({course}) ")
+                try:
+                    await Review.create(
+                        course=course,
+                        user=user,
+                        comment=row[1],
+                        stars=row[2]
+                    )
+                    logger.debug(f"Linked user({user}) to course({course}) ")
+                except IntegrityError as err:
+                    logger.error(f"{err} - Cant Link User({user}) with the Course({course}) ")
 
         return reviews
 

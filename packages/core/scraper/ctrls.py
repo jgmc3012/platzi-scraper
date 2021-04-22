@@ -102,7 +102,7 @@ class CtrlPyppetterScraper:
                 page_id, page = self.client.get_page_pool()
                 cookies = await page.cookies()
                 await page.deleteCookie(*cookies)
-                await page.goto(url)
+                await page.goto(url, options={'waitUntil':'domcontentloaded'})
                 html = await page.content()
                 await asyncio.sleep(0.5)
                 if 'Maintance-logo' not in html:
