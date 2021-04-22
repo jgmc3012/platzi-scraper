@@ -25,7 +25,7 @@ class CtrlBaseScraper:
         Visit the url and return the body html
         """
         async with self.sem:
-            logger.info(f'Visit to page {url}')
+            logger.debug(f'Visit to page {url}')
             while True:
                 html = await self.client.do_request(
                     url, return_data='text', 
@@ -98,7 +98,7 @@ class CtrlPyppetterScraper:
         """
         while True:
             async with self.sem:
-                logger.info(f'Visit to page {url}')
+                logger.debug(f'Visit to page {url}')
                 page_id, page = self.client.get_page_pool()
                 cookies = await page.cookies()
                 await page.deleteCookie(*cookies)

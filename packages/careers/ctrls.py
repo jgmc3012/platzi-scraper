@@ -25,7 +25,7 @@ class CareersScraper(CtrlPyppetterScraper):
         career = CareersPage(html, url)
         logger.info(f"Saving data from {url}")
         for row in zip(career.names, career.paths):
-            logger.info(f"Get or create Career {row[0]}")
+            logger.debug(f"Get or create Career {row[0]}")
             await Career.get_or_create(
                 name=row[0],
                 path=row[1],
