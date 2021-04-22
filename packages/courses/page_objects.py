@@ -60,3 +60,13 @@ class ReviewsPage(BasicPage):
                 logger.warning(f"WARNNIG - Verify that {self._url} don't has more of one page.")
             return 0
         return int(total_pages[0])
+
+    @property
+    def total_reviews(self):
+        total_reviews = self._get_property('total_reviews')
+        logger.info(f"TOTAL REVIEWS {total_reviews} on {self._url}")
+        if len(total_reviews) == 0:
+            if len(self.user_profiles) == 0:
+                logger.warning(f"WARNNIG - Verify that {self._url} don't has any review. Is this a new course?")
+            return 0
+        return int(total_reviews[0].replace(',',''))

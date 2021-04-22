@@ -46,3 +46,6 @@ reviews:
   total_pages:
       multiple: False
       xpath: "//li[contains(@class, 'Pagination-item') and position()=last()-1]//a/text()"
+  total_reviews:
+      multiple: False
+      xpath: "//div[@class='CourseExtraInfo-content']//a//p[position() = 1]/text()"

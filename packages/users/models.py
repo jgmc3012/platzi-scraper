@@ -7,3 +7,6 @@ class User(Model):
 
     def __str__(self):
         return self.username
+
+    class Meta:
+        table = "user_profile"
