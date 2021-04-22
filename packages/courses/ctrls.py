@@ -26,7 +26,7 @@ class CoursesScraper(CtrlPyppetterScraper):
         logger.info(f"Saving data from {url}")
         for row in zip(courses.names, courses.paths):
             logger.info(f"Get or create Course {row[0]}")
-            course = Course.get_or_create(
+            course, created = await Course.get_or_create(
                 name=row[0],
                 path=row[1],
             )

@@ -210,8 +210,11 @@ class MyPyppeteer(metaclass=SingletonClass):
     async def get_profile_dir(self):
         profile_dir = ''
         if platform == "linux" or platform == "linux2":  # linux
-            paths = glob(f'{Path.home()}/.config/google-chrome/*/Preferences')
-            paths += glob(f'{Path.home()}/.config/chromium/*/Preferences')
+            paths = (
+                glob(f'{Path.home()}/.config/google-chrome/*/Preferences') +
+                glob(f'{Path.home()}/.config/chromium/*/Preferences') +
+                glob(f'{os.getcwd()}/storage/*/Preferences')
+            )
         elif platform == "darwin":  # mac
             paths = glob(f'{Path.home()}/Library/Application Support/Google/Chrome/*/Preferences')  # ruta
         elif platform == "win32":  # Windows...
@@ -233,7 +236,7 @@ class MyPyppeteer(metaclass=SingletonClass):
         # https://github.com/GoogleChrome/chrome-launcher/blob/master/docs/chrome-flags-for-tools.md
 
         extra_args = kwargs.pop('args', [])
-        default_parrameters = {'headless': False, 'args': ['--no-sandbox', '--disable-setuid-sandbox'] + self.flags + extra_args}
+        default_parrameters = {'headless': False, 'args': ['--no-sandbox']}
 
         self.profile = kwargs.pop('profile_name', self.profile)
         if self.profile:

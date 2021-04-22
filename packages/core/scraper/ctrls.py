@@ -100,14 +100,16 @@ class CtrlPyppetterScraper:
             async with self.sem:
                 logger.info(f'Visit to page {url}')
                 page_id, page = self.client.get_page_pool()
+                cookies = await page.cookies()
+                await page.deleteCookie(*cookies)
                 await page.goto(url)
-                await asyncio.sleep(1.5)
                 html = await page.content()
+                await asyncio.sleep(0.5)
                 if 'Maintance-logo' not in html:
                     self.client.close_page_pool(page_id)
                     return html
+                self.client.close_page_pool(page_id)
                 logger.warning(f'Reloading {url}...')
-                await self.save_page(url, html)
                 await asyncio.sleep(2)
 
     async def close_client(self):

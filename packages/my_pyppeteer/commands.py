@@ -18,13 +18,14 @@ class AllCommands:
         def handle(self):
 
             headless = not bool(self.option('headless'))
-            profile_name = self.option('profile-name')
+            profile_name = self.option('profile-name') or 'Default'
             args = self.option('args')
             if args:
                 args = args.split(',')
             else:
                 args = []
-            AppLoop().get_loop().run_until_complete(MyPyppeteer().open_browser(headless=headless, args=args))
+            AppLoop().get_loop().run_until_complete(MyPyppeteer().open_browser(
+                headless=headless, profile_name=profile_name, args=args))
 
     class CommandCountPages(Command):
         """
