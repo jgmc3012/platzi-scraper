@@ -7,6 +7,7 @@ PyYAML==5.4.1
 
 # Clien Web
 aiohttp==3.7.4
+pyppeteer==0.2.5
 
 # Asyncio
 uvloop==0.15.2
@@ -14,5 +15,9 @@ uvloop==0.15.2
 # Database
 tortoise-orm[asyncpg]==0.17.2
 aerich==0.5.3  # https://github.com/tortoise/aerich for migrations DB
+
 # Scraper
 lxml==4.6.3
+
+# Tools
+more_itertools==8.7.0

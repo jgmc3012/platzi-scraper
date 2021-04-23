@@ -7,7 +7,6 @@ volumes:
 services:
   scraper:
     depends_on:
-      - proxy
       - postgres
     build:
       context: .

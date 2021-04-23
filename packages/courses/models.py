@@ -17,3 +17,6 @@ class Review(Model):
     user = fields.ForeignKeyField('users.User', related_name='reviews')
     comment = fields.TextField()
     stars = fields.DecimalField(max_digits=2, decimal_places=1)
+
+    class Meta:
+        unique_together = ("course", "user")

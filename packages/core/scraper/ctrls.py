@@ -2,7 +2,7 @@ import asyncio
 import os
 from packages.core.utils.web_client import WebClient
 import logging
-
+from packages.my_pyppeteer.ctrls import MyPyppeteer
 
 logger = logging.getLogger('log_print')
 
@@ -17,6 +17,7 @@ class CtrlBaseScraper:
     def __init__(self, sem:int=3):
         self.sem = asyncio.Semaphore(sem)
         self.token_cdn = "b6f700d21c835cdb85e1dd4ffba169e5835acd67-1618699169-1800-AV/JsX5SBfrWcHQHR1cnZYnqLuvet+VnsTrG7s7LdjTbpNf6ME15yj0l2R2Dqt33rfm3YY5ytPj8v1H3NpDwcpN0ZHaNdRDMTL+XCDiGDiqttPMKwGm91iiMe5XAS6JMN9zyQ1o2nASWcAsZn/aL56VGaNpXVpeOwPAVfkLv6IIaNdPMNi8hN8fOJ6XwMcA23A=="
+
     async def visit_page(self, url:str):
         """
         Await than semaphore is available.
@@ -24,7 +25,7 @@ class CtrlBaseScraper:
         Visit the url and return the body html
         """
         async with self.sem:
-            logger.info(f'Visit to page {url}')
+            logger.debug(f'Visit to page {url}')
             while True:
                 html = await self.client.do_request(
                     url, return_data='text', 
@@ -69,3 +70,57 @@ class CtrlBaseScraper:
             f.write(html)
 
 
+class CtrlPyppetterScraper:
+    WORK_DIR = os.getcwd()
+
+    client = MyPyppeteer()
+    USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0"
+    URL_BASE = "https://platzi.com"
+
+    def __init__(self, sem:int=3):
+        self.sem = asyncio.Semaphore(sem)
+        self.lock = asyncio.locks.Lock()
+        self.number_pages = sem
+        self.running_client = False
+
+    async def init_client(self):
+        """Init pool tabs"""
+        async with self.lock:
+            if not self.running_client:
+                self.running_client = True
+                await self.client.init_pool_pages(self.number_pages)
+
+    async def visit_page(self, url:str):
+        """
+        Await than semaphore is available.
+
+        Visit the url and return the body html
+        """
+        while True:
+            async with self.sem:
+                logger.debug(f'Visit to page {url}')
+                page_id, page = self.client.get_page_pool()
+                cookies = await page.cookies()
+                await page.deleteCookie(*cookies)
+                await page.goto(url, options={'waitUntil':'domcontentloaded'})
+                html = await page.content()
+                await asyncio.sleep(0.5)
+                if 'Maintance-logo' not in html:
+                    self.client.close_page_pool(page_id)
+                    return html
+                self.client.close_page_pool(page_id)
+                logger.warning(f'Reloading {url}...')
+                await asyncio.sleep(2)
+
+    async def close_client(self):
+        """Close pool tabs"""
+        async with self.lock:
+            if self.running_client:
+                self.running_client = False
+                await self.client.close_pool(self.number_pages)
+
+    async def save_page(self, url, html=''):
+        if not html:
+            html = await self.visit_page(url)
+        with open(f'storage/{url.replace("/", "")}.html', 'w+') as f:
+            f.write(html)
