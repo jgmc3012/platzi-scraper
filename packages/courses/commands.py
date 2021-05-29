@@ -27,5 +27,5 @@ class AllCommands:
 
         def handle(self):
             AppLoop().get_loop().run_until_complete(
-                ReviewsScraper(sem=5).run()
+                ReviewsScraper(sem=6).run()
             )

@@ -1,8 +1,8 @@
 version: "3"
 
 volumes:
-  local_postgres_data:
-  local_postgres_data_backups:
+  scraper_platzi_data:
+  scraper_platzi_data_backups:
 
 services:
   scraper:
@@ -31,8 +31,8 @@ services:
     networks:
       db-net:
     volumes:
-      - local_postgres_data:/var/lib/postgresql/data
-      - local_postgres_data_backups:/backups
+      - scraper_platzi_data:/var/lib/postgresql/data
+      - scraper_platzi_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
 
