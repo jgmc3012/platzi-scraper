@@ -242,7 +242,7 @@ class MyPyppeteer(metaclass=SingletonClass):
         if self.profile:
             kwargs['userDataDir'] = await self.get_profile_dir()
 
-        # default_parrameters.update(kwargs)
+        default_parrameters.update(kwargs)
         self.browser = await launch(**default_parrameters)
         self.oppener = True
         return await self.get_conenction(daemon)
