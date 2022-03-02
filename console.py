@@ -1,3 +1,4 @@
+#!/usr/local/bin/python
 from cleo import Application
 from packages.core.utils.app_loop import AppLoop
 from packages.core.modules import ModuleManager
