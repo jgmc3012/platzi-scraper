@@ -17,7 +17,6 @@ class AppLoop(metaclass=SingletonClass):
 
     def __del__(self):
         if not self.event_loop.is_closed():
-            print(dir(self.event_loop))
             self.event_loop.close()
 
     def get_loop(self):
