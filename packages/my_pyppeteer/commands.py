@@ -7,17 +7,17 @@ class AllCommands:
 
     class OpenPyppeteerBrowser(Command):
         """
-        Open Pyppeteer Browser --headless=0
+        Open Pyppeteer Browser
 
         pyppeteer:open_browser
         {--args= : nothing extra by default}
-        {--headless= : headless =1 by default}
+        {--gui : Using a graphical user interface?}
         {--profile-name= : profile-name}
         """
 
         def handle(self):
 
-            headless = not bool(self.option('headless'))
+            headless = not self.option('gui')
             profile_name = self.option('profile-name') or 'Default'
             args = self.option('args')
             if args:

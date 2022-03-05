@@ -56,6 +56,7 @@ class MyPyppeteer(metaclass=SingletonClass):
             '--disable-speech-api',
             '--no-first-run',
             '--enable-automation',
+            '--no-sandbox'
         ]
 
     @property
@@ -139,19 +140,18 @@ class MyPyppeteer(metaclass=SingletonClass):
                     self.set_ws_profile(None)
                     if ask_input:
                         msg = 'desea continuar en un explorador temporal? (se cerrara al terminar la ejecucion)'  # ' [Y/n] (tiene 15 seg para responder)'
-                        print(msg)
+                        logger.warn(msg)
                         resp = None
                         if resp and resp.lower() != 'y':
                             raise Exception(f'please, open pyppetter before, profile:{self.profile}, old_ws:{self.ws}, new_ws=None')
 
         if not self.browser:
-            default_parrameters = {'headless': True, 'args': ['--no-sandbox'] + self.flags}
-            default_parrameters.update(kwargs)
-            kwargs = default_parrameters
+            # TODO: Is possible that the browser is not opened?
+            logger.warn('TODO: Is possible that the browser is not opened? Yes')
             if self.profile:
                 kwargs['userDataDir'] = await self.get_profile_dir()
-            print(kwargs)
-            self.browser = await launch(**kwargs)
+            logger.warn(kwargs)
+            self.browser = await self.launch_browser(**kwargs)
 
         return await self.get_conenction(daemon=False)
 
@@ -232,18 +232,24 @@ class MyPyppeteer(metaclass=SingletonClass):
         print('self.profile', self.profile)
         return profile_dir
 
+    async def launch_browser(self, **extra_parameters):
+        parameters = {'headless': True, 'args': self.flags, **extra_parameters}
+        try:
+            return await launch(**parameters)
+        except errors.BrowserError as e:
+            if not parameters['headless']:
+                logger.error('Not is posible to launch the browser. Is you try to open browser in a environment without graphical interface?')
+            raise e
+
     async def open_browser(self, daemon=True, **kwargs):
         # https://github.com/GoogleChrome/chrome-launcher/blob/master/docs/chrome-flags-for-tools.md
 
-        extra_args = kwargs.pop('args', [])
-        default_parrameters = {'headless': False, 'args': ['--no-sandbox']}
-
+        _ = kwargs.pop('args', [])
         self.profile = kwargs.pop('profile_name', self.profile)
         if self.profile:
             kwargs['userDataDir'] = await self.get_profile_dir()
 
-        default_parrameters.update(kwargs)
-        self.browser = await launch(**default_parrameters)
+        self.browser = await self.launch_browser(**kwargs)
         self.oppener = True
         return await self.get_conenction(daemon)
 
