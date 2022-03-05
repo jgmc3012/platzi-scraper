@@ -16,6 +16,8 @@ services:
       - .:/app
     env_file:
       - ./.envs/.local/.postgres
+    environment:
+      - BROWSER_IP=host.docker.internal
     labels:
       - traefik.docker.network=scraper-proxy-net
       - traefik.http.routers.scraper.rule=(Host(`platzi-scraper.jgmc3012.local`))

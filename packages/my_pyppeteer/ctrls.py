@@ -9,8 +9,10 @@ from pathlib import Path
 import json
 import yaml
 import socket
-import subprocess
+from os import environ
+from logging import getLogger
 
+logger = getLogger('log_print')
 
 class MyPyppeteer(metaclass=SingletonClass):
     """
@@ -102,27 +104,27 @@ class MyPyppeteer(metaclass=SingletonClass):
         self.pool['availables'].insert(0, page_id)
 
     def get_ws_profile(self):
-        return self.yaml.get(self.profile)
+        ws = self.yaml.get(self.profile)
+        if not ws:
+            return
 
-    def set_ws_profile(self, ws=None):
-        if not self.yaml:
-            self.get_ws_profile()
+        return re.sub(r'\d+\.\d+\.\d+\.\d+', environ['BROWSER_IP'], ws, 1)
 
-        if self.yaml is not None:
-            self.yaml[self.profile] = ws
-            with open(self.yaml_name, 'w') as fp:
-                yaml.dump(self.yaml, fp, default_flow_style=False)
+    def set_ws_profile(self, ws):
+        self.yaml[self.profile] = ws
+        with open(self.yaml_name, 'w') as fp:
+            yaml.dump(self.yaml, fp, default_flow_style=False)
 
-    async def check_ws_opened(self):
+    def check_ws_opened(self):
         if not self.ws:
-            return 0
-        port = re.search(r'ws://(\d+\.\d+\.\d+\.\d+):(\d+)/', self.ws)
-        ip = port.group(1)
-        port = int(port.group(2))
+            return False
 
+        address =re.search(r'ws://(.+):(\d+)/', self.ws)
+        ip = address.group(1)
+        port = int(address.group(2))
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        result = sock.connect_ex((ip, port))
-        return result == 0
+        err = sock.connect_ex((ip, port))
+        return err == 0
 
     async def connect_browser(self, ws=None, ask_input=True, **kwargs):
         if not self.browser:
@@ -131,7 +133,7 @@ class MyPyppeteer(metaclass=SingletonClass):
             if not self.ws:
                 self.ws = self.get_ws_profile()
             if self.ws:
-                if await self.check_ws_opened():
+                if self.check_ws_opened():
                     self.browser = await connect(browserWSEndpoint=self.ws)
                 else:
                     self.set_ws_profile(None)
@@ -195,11 +197,9 @@ class MyPyppeteer(metaclass=SingletonClass):
     async def get_conenction(self, daemon):
         if not self.ws:
             self.ws = self.browser.wsEndpoint
-
-        if self.ws:
             self.set_ws_profile(self.ws)
-
-        print(f'pyppeteer get_conenction, {self.profile} --> ws: {self.ws}')
+        
+        logger.warn(f'Profile: {self.profile} --> ws: {self.ws}')
         if daemon:
             input('Oprima (enter) para cerrar: ')
             await self.browser.close()
