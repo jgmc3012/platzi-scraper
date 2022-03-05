@@ -13,7 +13,7 @@ from os import environ
 from logging import getLogger
 
 logger = getLogger('log_print')
-DEFAULT_PROFILE = 'Default'
+DEFAULT_PROFILE = 'Private'
 
 class MyPyppeteer(metaclass=SingletonClass):
     """
@@ -27,6 +27,7 @@ class MyPyppeteer(metaclass=SingletonClass):
         self._yaml = {}
         self.yaml_name = 'storage/pyppetter_browsers.yaml'
         self.profile = profile
+        self._profile_dir = ''
         self.ws = None
         self.rotate_enabled = False
         self.TimeoutDefault = 0
@@ -205,17 +206,20 @@ class MyPyppeteer(metaclass=SingletonClass):
         self.page = (await self.browser.pages())[0]
         return self.browser, self.page
 
-    async def get_profile_dir(self):
-        profile_dir = ''
-        if platform == "linux" or platform == "linux2":  # linux
+    def get_profile_dir(self):
+        if self._profile_dir:
+            breakpoint
+            return self._profile_dir
+
+        if platform in ['linux', 'linux2']:  # linux
             paths = (
                 glob(f'{Path.home()}/.config/google-chrome/*/Preferences') +
                 glob(f'{Path.home()}/.config/chromium/*/Preferences') +
                 glob(f'{os.getcwd()}/storage/*/Preferences')
             )
         elif platform == "darwin":  # mac
-            paths = glob(f'{Path.home()}/Library/Application Support/Google/Chrome/*/Preferences')  # ruta
-        elif platform == "win32":  # Windows...
+            paths = glob(f'{Path.home()}/Library/Application Support/Google/Chrome/*/Preferences')
+        elif platform == "win32":  # Windows
             paths = glob(f'{Path.home()}\\AppData\\Local\\Chromium\\User Data\\*\\Preferences')
 
         profile_names = []
@@ -225,22 +229,23 @@ class MyPyppeteer(metaclass=SingletonClass):
                 profile_name = temp['profile']['name']
                 profile_names.append(profile_name)
                 if profile_name == self.profile:
-                    profile_dir = str(Path(path).parent)
+                    self._profile_dir = str(Path(path).parent)
                     break
 
-        if not profile_dir and self.profile != DEFAULT_PROFILE:
+        if not self._profile_dir and self.profile != DEFAULT_PROFILE:
             logger.error(
                 f'Please, create a new profile with "{self.profile}" as name.'
                 ' Or choose one of the following: '
                 f"[{', '.join(profile_names)}]"
             )
             exit(1)
-        return profile_dir
+        return self._profile_dir
 
     async def launch_browser(self, **extra_parameters):
         parameters = {'headless': True, 'args': self.flags, **extra_parameters}
-        if self.profile:
-            parameters['userDataDir'] = await self.get_profile_dir()
+        if self.get_profile_dir():
+            parameters['args'] += [f'--profile-directory={Path(self.get_profile_dir()).name}']
+            parameters['userDataDir'] = str(Path(self.get_profile_dir()).parent)
         try:
             return await launch(**parameters)
         except errors.BrowserError as e:
