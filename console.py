@@ -1,6 +1,5 @@
 #!/usr/local/bin/python
 from cleo import Application
-import pyppeteer
 from packages.core.utils.app_loop import AppLoop
 from packages.core.modules import ModuleManager
 from packages.core.utils.logger import Logger
