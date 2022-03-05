@@ -215,7 +215,7 @@ class MyPyppeteer(metaclass=SingletonClass):
         elif platform == "darwin":  # mac
             paths = glob(f'{Path.home()}/Library/Application Support/Google/Chrome/*/Preferences')  # ruta
         elif platform == "win32":  # Windows...
-            raise Exception('cuando alguien lo necesite, poner la ruta de chrome para windows, y probar')
+            paths = glob(f'{Path.home()}\\AppData\\Local\\Chromium\\User Data\\*\\Preferences')
 
         for path in paths:
             with open(path) as f:
