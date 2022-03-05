@@ -148,9 +148,6 @@ class MyPyppeteer(metaclass=SingletonClass):
         if not self.browser:
             # TODO: Is possible that the browser is not opened?
             logger.warn('TODO: Is possible that the browser is not opened? Yes')
-            if self.profile:
-                kwargs['userDataDir'] = await self.get_profile_dir()
-            logger.warn(kwargs)
             self.browser = await self.launch_browser(**kwargs)
 
         return await self.get_conenction(daemon=False)
@@ -229,11 +226,12 @@ class MyPyppeteer(metaclass=SingletonClass):
 
         if not profile_dir and self.profile != "Default":
             raise Exception(f'Por favor crear perfil chrome con el nombre: "{self.profile}"')
-        print('self.profile', self.profile)
         return profile_dir
 
     async def launch_browser(self, **extra_parameters):
         parameters = {'headless': True, 'args': self.flags, **extra_parameters}
+        if self.profile:
+            parameters['userDataDir'] = await self.get_profile_dir()
         try:
             return await launch(**parameters)
         except errors.BrowserError as e:
@@ -246,9 +244,6 @@ class MyPyppeteer(metaclass=SingletonClass):
 
         _ = kwargs.pop('args', [])
         self.profile = kwargs.pop('profile_name', self.profile)
-        if self.profile:
-            kwargs['userDataDir'] = await self.get_profile_dir()
-
         self.browser = await self.launch_browser(**kwargs)
         self.oppener = True
         return await self.get_conenction(daemon)
