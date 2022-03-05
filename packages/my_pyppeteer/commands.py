@@ -18,7 +18,7 @@ class AllCommands:
         def handle(self):
 
             headless = not self.option('gui')
-            profile_name = self.option('profile-name') or 'Default'
+            profile_name = self.option('profile-name')
             args = self.option('args')
             if args:
                 args = args.split(',')

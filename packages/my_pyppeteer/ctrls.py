@@ -20,13 +20,13 @@ class MyPyppeteer(metaclass=SingletonClass):
     Clase para simular la navegacion de un usuario en un navegador
     """
 
-    def __init__(self, profile=DEFAULT_PROFILE):
+    def __init__(self, profile=None):
         self.browser = None
         self.oppener = False
         self.max_opened_tabs = 50
         self._yaml = {}
         self.yaml_name = 'storage/pyppetter_browsers.yaml'
-        self.profile = profile
+        self.profile = profile or DEFAULT_PROFILE
         self._profile_dir = ''
         self.ws = None
         self.rotate_enabled = False
