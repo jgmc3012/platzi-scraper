@@ -13,13 +13,14 @@ from os import environ
 from logging import getLogger
 
 logger = getLogger('log_print')
+DEFAULT_PROFILE = 'Default'
 
 class MyPyppeteer(metaclass=SingletonClass):
     """
     Clase para simular la navegacion de un usuario en un navegador
     """
 
-    def __init__(self, profile='Default'):
+    def __init__(self, profile=DEFAULT_PROFILE):
         self.browser = None
         self.oppener = False
         self.max_opened_tabs = 50
@@ -217,15 +218,23 @@ class MyPyppeteer(metaclass=SingletonClass):
         elif platform == "win32":  # Windows...
             paths = glob(f'{Path.home()}\\AppData\\Local\\Chromium\\User Data\\*\\Preferences')
 
+        profile_names = []
         for path in paths:
             with open(path) as f:
                 temp = json.load(f)
-                if temp['profile']['name'] == self.profile:
-                    profile_dir = '/'.join(path.split('/')[:-1])
+                profile_name = temp['profile']['name']
+                profile_names.append(profile_name)
+                if profile_name == self.profile:
+                    profile_dir = str(Path(path).parent)
                     break
 
-        if not profile_dir and self.profile != "Default":
-            raise Exception(f'Por favor crear perfil chrome con el nombre: "{self.profile}"')
+        if not profile_dir and self.profile != DEFAULT_PROFILE:
+            logger.error(
+                f'Please, create a new profile with "{self.profile}" as name.'
+                ' Or choose one of the following: '
+                f"[{', '.join(profile_names)}]"
+            )
+            exit(1)
         return profile_dir
 
     async def launch_browser(self, **extra_parameters):
