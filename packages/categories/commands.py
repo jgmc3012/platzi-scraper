@@ -10,7 +10,7 @@ class AllCommands:
         """
         Scraper platzi categories
 
-        scraper:platzi_categories
+        categories:scraper
         {--browser-profile-name= : profile-name}
         """
 

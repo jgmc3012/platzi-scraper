@@ -10,7 +10,7 @@ class AllCommands:
         """
         Scraper platzi courses
 
-        scraper:platzi_courses
+        courses:scraper
         {--browser-profile-name= : profile-name}
         """
 
@@ -24,7 +24,7 @@ class AllCommands:
         """
         Scraper platzi reviews
 
-        scraper:platzi_reviews
+        courses:scraper_reviews
         """
 
         def handle(self):

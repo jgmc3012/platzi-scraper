@@ -28,5 +28,10 @@ Launch Browser
 python console.py  pyppeteer:open_browser --gui --profile-name="Person 1"
 ```
 
+### Select the command that you want run
+exec `./init.local.sh run --rm scraper` and afert `./console.py`.
+
+Remenber. You always should indicate an `--browser-profile-name="Person 1"`.
+
 # Login on Database
 `psql -U $POSTGRES_USER -h $POSTGRES_HOST -d $POSTGRES_DB -W`

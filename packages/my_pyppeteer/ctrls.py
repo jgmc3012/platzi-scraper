@@ -129,30 +129,17 @@ class MyPyppeteer(metaclass=SingletonClass):
         err = sock.connect_ex((ip, port))
         return err == 0
 
-    async def connect_browser(self, ws=None, ask_input=True, **kwargs):
-        if not self.browser:
-            if ws:
-                self.ws = ws
-            if not self.ws:
-                self.ws = self.get_ws_profile()
-            if self.ws:
-                if self.check_ws_opened():
-                    self.browser = await connect(browserWSEndpoint=self.ws)
-                else:
-                    self.set_ws_profile(None)
-                    if ask_input:
-                        msg = 'desea continuar en un explorador temporal? (se cerrara al terminar la ejecucion)'  # ' [Y/n] (tiene 15 seg para responder)'
-                        logger.warn(msg)
-                        resp = None
-                        if resp and resp.lower() != 'y':
-                            raise Exception(f'please, open pyppetter before, profile:{self.profile}, old_ws:{self.ws}, new_ws=None')
+    async def connect_browser(self, ws=None, **kwargs):
+        if self.browser:
+            return await self.get_connection(daemon=False)
 
-        if not self.browser:
-            # TODO: Is possible that the browser is not opened?
-            logger.warn('TODO: Is possible that the browser is not opened? Yes')
-            self.browser = await self.launch_browser(**kwargs)
+        self.ws = ws or self.get_ws_profile()
+        if self.check_ws_opened():
+            self.browser = await connect(browserWSEndpoint=self.ws)
+            return await self.get_connection(daemon=False)
 
-        return await self.get_conenction(daemon=False)
+        self.browser = await self.launch_browser(**kwargs)
+        return await self.get_connection(daemon=False)
 
     async def get_attribute(self, obj, attr, page=None):
         if not page:
@@ -191,24 +178,26 @@ class MyPyppeteer(metaclass=SingletonClass):
 
     async def count_pages(self):
         self.browser, self.page = await MyPyppeteer().connect_browser()
-        print(f'{len(await self.browser.pages())}')
+        pages = await self.browser.pages()
+        logger.warn(f'Open pages: {len(pages)}')
+        return len(pages)
 
-    async def get_conenction(self, daemon):
+    async def get_connection(self, daemon):
         if not self.ws:
             self.ws = self.browser.wsEndpoint
             self.set_ws_profile(self.ws)
-        
+
         logger.warn(f'Profile: {self.profile} --> ws: {self.ws}')
         if daemon:
             input('Oprima (enter) para cerrar: ')
             await self.browser.close()
             return
+
         self.page = (await self.browser.pages())[0]
         return self.browser, self.page
 
     def get_profile_dir(self):
         if self._profile_dir:
-            breakpoint
             return self._profile_dir
 
         if platform in ['linux', 'linux2']:  # linux
@@ -260,7 +249,7 @@ class MyPyppeteer(metaclass=SingletonClass):
         self.profile = kwargs.pop('profile_name', self.profile)
         self.browser = await self.launch_browser(**kwargs)
         self.oppener = True
-        return await self.get_conenction(daemon)
+        return await self.get_connection(daemon)
 
     async def newPage(self, headless=True):
         for _ in range(10):

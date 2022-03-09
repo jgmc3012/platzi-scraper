@@ -111,7 +111,7 @@ class CtrlPyppetterScraper:
                     return html
                 self.client.close_page_pool(page_id)
                 logger.warning(f'Reloading {url}...')
-                await asyncio.sleep(2)
+                await asyncio.sleep(self.number_pages)
 
     async def close_client(self):
         """Close pool tabs"""
