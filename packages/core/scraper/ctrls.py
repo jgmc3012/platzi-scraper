@@ -106,12 +106,15 @@ class CtrlPyppetterScraper:
                 await page.goto(url, options={'waitUntil':'domcontentloaded'})
                 html = await page.content()
                 await asyncio.sleep(0.5)
-                if 'Maintance-logo' not in html:
+
+                if  ('<title>Please Wait...' in html) or ('Maintance-logo' in html):
                     self.client.close_page_pool(page_id)
-                    return html
+                    logger.warning(f'Reloading {url}...')
+                    await asyncio.sleep(self.number_pages)
+                    continue
+
                 self.client.close_page_pool(page_id)
-                logger.warning(f'Reloading {url}...')
-                await asyncio.sleep(self.number_pages)
+                return html
 
     async def close_client(self):
         """Close pool tabs"""
