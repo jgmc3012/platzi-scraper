@@ -25,9 +25,11 @@ class AllCommands:
         Scraper platzi reviews
 
         courses:scraper_reviews
+        {--browser-profile-name= : profile-name}
         """
 
         def handle(self):
+            browser_profile_name = self.option('browser-profile-name')
             AppLoop().get_loop().run_until_complete(
-                ReviewsScraper(sem=5).run()
+                ReviewsScraper(browser_profile_name).run()
             )
