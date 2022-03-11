@@ -14,7 +14,7 @@ class LessonsScraper(CtrlPyppetterScraper):
     async def run(self):
         await self.init_client()
         courses = await Course.all()
-        coros = (self.scraper(course) for course in courses)
+        coros = map(self.scraper, courses)
         await asyncio.gather(*coros)
         await self.close_client()
 

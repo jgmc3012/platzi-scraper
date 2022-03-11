@@ -52,6 +52,7 @@ class BasicPage:
             if not result:
                 logger.warning(f"Property {property_name} don't match on {self._url}")
             self._properties[property_name] = result
+
         return self._properties[property_name]
 
     def _save_html(self):
