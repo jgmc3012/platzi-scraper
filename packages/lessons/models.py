@@ -1,3 +1,4 @@
+from email.policy import default
 from enum import Enum
 from tortoise.models import Model
 from tortoise import fields
@@ -11,7 +12,7 @@ class Lesson(Model):
     duration_in_seg = fields.IntField()
 
     def get_or_create(self):
-        pass
+        raise NotImplementedError
 
     def __str__(self):
         return self.name
@@ -28,11 +29,19 @@ class Comment(Model):
     father = fields.ForeignKeyField('lessons.Comment', related_name='chilldrens')
     user = fields.ForeignKeyField('users.User', related_name='comments')
     content = fields.TextField()
-    stars = fields.DecimalField(max_digits=2, decimal_places=1)
     writed_at = fields.DatetimeField()
     likes = fields.IntField()
     kind = fields.IntField(
-        choices=((tag, tag.value) for tag in Kind)
+        choices=((tag, tag.value) for tag in Kind),
+        default=Kind.SIMPLE.value
     )
+    external_id = fields.CharField(100)
+
     class Meta:
         unique_together = ("course", "user")
+
+    def get_or_create(self):
+        raise NotImplementedError
+
+    def __str__(self):
+        return f'{self.user}: {self.content[:20]}...'

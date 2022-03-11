@@ -9,6 +9,9 @@ class Course(Model):
     # release = fields.DatetimeField()
     # teacher = fields.ForeignKeyField('users.User', related_name='courses')
 
+    async def actives(self):
+        raise NotImplementedError
+
     def __str__(self):
         return self.name
 

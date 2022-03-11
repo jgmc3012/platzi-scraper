@@ -8,5 +8,8 @@ class User(Model):
     def __str__(self):
         return self.username
 
+    def get_or_create(self):
+        raise NotImplementedError
+
     class Meta:
         table = "user_profile"
