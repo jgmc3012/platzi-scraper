@@ -1,9 +1,10 @@
 import asyncio
+import imp
 import os
 from packages.core.utils.web_client import WebClient
 import logging
 from packages.my_pyppeteer.ctrls import MyPyppeteer
-
+from json import loads as json_loads
 logger = logging.getLogger('log_print')
 
 
@@ -128,3 +129,25 @@ class CtrlPyppetterScraper:
             html = await self.visit_page(url)
         with open(f'storage/{url.replace("/", "")}.html', 'w+') as f:
             f.write(html)
+
+    def get_preload_state(self, html: str)-> dict:
+        """Search line in html that describe window.__PRELOADED_STATE__ and
+        return its content as dictionary.
+
+        Args:
+            html (str): HTML content decoded
+
+        Returns:
+            dict: preload_state page
+        """
+        for line in html:
+            if 'window.__PRELOADED_STATE__' not in line:
+                continue
+            
+            start = line.index('{')
+            json_str = line[start:].replace('</script>', '')
+
+            return json_loads(json_str)
+
+        logger.warn("Can't extract __PRELOADED_STATE__ from html.")
+        return {}
