@@ -6,6 +6,8 @@ class Course(Model):
     name = fields.CharField(max_length=100, unique=True)
     path = fields.CharField(max_length=150, unique=True)
     careers = fields.ManyToManyField('careers.Career', related_name='courses')
+    # release = fields.DatetimeField()
+    # teacher = fields.ForeignKeyField('users.User', related_name='courses')
 
     def __str__(self):
         return self.name

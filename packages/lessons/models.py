@@ -8,6 +8,10 @@ class Lesson(Model):
     title = fields.CharField(max_length=100, unique=True)
     path = fields.CharField(max_length=150, unique=True)
     course = fields.ForeignKeyField('courses.Course', related_name='lessons')
+    duration_in_seg = fields.IntField()
+
+    def get_or_create(self):
+        pass
 
     def __str__(self):
         return self.name
