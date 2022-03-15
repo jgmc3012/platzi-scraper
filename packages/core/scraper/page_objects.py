@@ -1,9 +1,10 @@
 
-import os
 import logging
+import os
+from json import loads as json_loads
+
 from lxml import html
 from packages.core.utils.config import Config
-
 
 logger = logging.getLogger('log_print')
 
@@ -58,3 +59,25 @@ class BasicPage:
     def _save_html(self):
         with open(f'{self.WORK_DIR}/storage/{self._url.replace("/","")}.html', 'w+') as f:
             f.write(self._raw_html)
+
+    def get_preload_state(self, html: str)-> dict:
+        """Search line in html that describe window.__PRELOADED_STATE__ and
+        return its content as dictionary.
+
+        Args:
+            html (str): HTML content decoded
+
+        Returns:
+            dict: preload_state page
+        """
+        for line in html:
+            if 'window.__PRELOADED_STATE__' not in line:
+                continue
+            
+            start = line.index('{')
+            json_str = line[start:].replace('</script>', '')
+
+            return json_loads(json_str)
+
+        logger.warn("Can't extract __PRELOADED_STATE__ from html.")
+        return {}

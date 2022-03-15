@@ -19,3 +19,11 @@ class LessonsPage(BasicPage):
     @property
     def durations(self):
         return map(str_to_seg, self._get_property('durations'))
+
+
+class CommentsPage(BasicPage):
+    type_page = 'comments'
+
+    @property
+    def as_list(self):
+        return self._get_property('as_list')
