@@ -3,8 +3,9 @@ import logging
 
 from packages.core.scraper.ctrls import CtrlPyppetterScraper
 from packages.courses.models import Course
+from packages.users.models import  User
 
-from .models import Lesson
+from .models import Lesson, Comment
 from .page_objects import LessonsPage
 
 logger = logging.getLogger('log_print')
@@ -23,10 +24,9 @@ class LessonsScraper(CtrlPyppetterScraper):
         url = self.URL_BASE + course.path
         html = await self.visit_page(url)
         lessons = LessonsPage(html, url)
-        logger.info(f"Saving data from {url}")
+        logger.info(f"Saving Lesson data from {url}")
         for index, row in enumerate(zip(lessons.titles, lessons.paths, lessons.durations)):
-            logger.debug(f"Get or create Lesson {row[0]}")
-            course, _ = await Lesson.get_or_create(
+            await Lesson.get_or_create(
                 title=row[0],
                 path=row[1],
                 duration_in_seg=row[2],
@@ -35,4 +35,24 @@ class LessonsScraper(CtrlPyppetterScraper):
             )
 
 class CommentsScraper(CtrlPyppetterScraper):
-    pass
+
+    async def run(self):
+        await self.init_client()
+        lessons = await Lesson.actives()
+        coros = map(self.scraper, lessons)
+        await asyncio.gather(*coros)
+        await self.close_client()
+
+    async def scraper(self, lesson: Lesson):
+        url = self.URL_BASE + lesson.path
+        html = await self.visit_page(url)
+        comments = CommentsPage(html, url)
+        logger.info(f"Saving Comment data from {url}")
+        for comment in comments.as_list():
+            author, _ = await User.get_or_create(username=comment['author'])
+            await Comment.get_or_create(
+                lesson=lesson,
+                content=comment['content'],
+                author=author,
+                likes=int(comment['likes']),
+            )

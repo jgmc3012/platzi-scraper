@@ -1,7 +1,10 @@
-from email.policy import default
 from enum import Enum
-from tortoise.models import Model
+from logging import getLogger
+
 from tortoise import fields
+from tortoise.models import Model
+
+logger = getLogger('log_print')
 
 class Lesson(Model):
     id = fields.IntField(pk=True)
@@ -11,7 +14,9 @@ class Lesson(Model):
     course = fields.ForeignKeyField('courses.Course', related_name='lessons')
     duration_in_seg = fields.IntField()
 
-    def get_or_create(self):
+    def get_or_create(self, title, path, course, duration_in_seg, track_number):
+        logger.debug(f"Get or create Lesson {title}")
+
         raise NotImplementedError
 
     def __str__(self):
@@ -20,27 +25,21 @@ class Lesson(Model):
 
 class Comment(Model):
 
-    class Kind(Enum):
-        QUESTION = 1
-        SIMPLE = 2
-
     id = fields.IntField(pk=True)
     lesson = fields.ForeignKeyField('lessons.Lesson', related_name='comments')
     father = fields.ForeignKeyField('lessons.Comment', related_name='chilldrens')
-    user = fields.ForeignKeyField('users.User', related_name='comments')
+    author = fields.ForeignKeyField('users.User', related_name='comments')
     content = fields.TextField()
     writed_at = fields.DatetimeField()
     likes = fields.IntField()
-    kind = fields.IntField(
-        choices=((tag, tag.value) for tag in Kind),
-        default=Kind.SIMPLE.value
-    )
     external_id = fields.CharField(100)
 
     class Meta:
         unique_together = ("course", "user")
 
-    def get_or_create(self):
+    def get_or_create(self, lesson, father, author, content, likes, external_id):
+        logger.debug(f"Get or create Comment by {author}")
+
         raise NotImplementedError
 
     def __str__(self):
