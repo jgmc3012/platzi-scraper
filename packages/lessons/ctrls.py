@@ -38,7 +38,7 @@ class CommentsScraper(CtrlPyppetterScraper):
 
     async def run(self):
         await self.init_client()
-        lessons = await Lesson.actives()
+        lessons = await Lesson.all()
         coros = map(self.scraper, lessons)
         await asyncio.gather(*coros)
         await self.close_client()

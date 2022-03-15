@@ -1,7 +1,7 @@
-from enum import Enum
 from logging import getLogger
 
 from tortoise import fields
+from tortoise.exceptions import DoesNotExist, IntegrityError
 from tortoise.models import Model
 
 logger = getLogger('log_print')
@@ -14,13 +14,30 @@ class Lesson(Model):
     course = fields.ForeignKeyField('courses.Course', related_name='lessons')
     duration_in_seg = fields.IntField()
 
-    def get_or_create(self, title, path, course, duration_in_seg, track_number):
-        logger.debug(f"Get or create Lesson {title}")
-
-        raise NotImplementedError
-
     def __str__(self):
-        return self.name
+        return f"Lesson({self.title})"
+
+
+    async def get_or_create(self, title, course, path, duration_in_seg, track_number):
+        logger.debug(f"Get or create Lesson {title}")
+        try:
+            lesson = await self.get(title=title, course=course)
+            return lesson, False
+        except DoesNotExist:
+            pass
+
+        try:
+            lesson = await self.create(
+                title=title, course=course, path=path,
+                duration_in_seg=duration_in_seg,
+                track_number=track_number
+            )
+        except IntegrityError as err:
+            logger.error(f"{err} - Cant Create Lesson ({title})")
+            return None, False
+
+        logger.debug(f"{lesson} created")
+        return lesson, True
 
 
 class Comment(Model):
@@ -34,13 +51,26 @@ class Comment(Model):
     likes = fields.IntField()
     external_id = fields.CharField(100)
 
-    class Meta:
-        unique_together = ("course", "user")
+    def __str__(self):
+        return f'Comment({self.author}: {self.content[:20]}...)'
 
-    def get_or_create(self, lesson, father, author, content, likes, external_id):
+    async def get_or_create(self, lesson, author, content, likes, external_id, father=None):
         logger.debug(f"Get or create Comment by {author}")
 
-        raise NotImplementedError
+        try:
+            comment = await self.get(lesson=lesson, external_id=external_id)
+            return comment, False
+        except DoesNotExist:
+            pass
+        
+        try:
+            comment = await self.create(
+                lesson=lesson, author=author, content=content,
+                likes=likes, external_id=external_id, father=father
+            )
+        except IntegrityError as err:
+            logger.error(f"{err} - Cant Create Comment ({author})")
+            return None, False
 
-    def __str__(self):
-        return f'{self.user}: {self.content[:20]}...'
+        logger.debug(f"{comment} created")
+        return comment, True
