@@ -1,11 +1,11 @@
 from logging import getLogger
-from packages.core.scraper.page_objects import BasicPage
+from packages.core.scraper.page_objects import XPathPage
 
 
 logger = getLogger('log_print')
 
 
-class CoursesPage(BasicPage):
+class CoursesPage(XPathPage):
     type_page = 'courses'
 
     @property
@@ -16,7 +16,7 @@ class CoursesPage(BasicPage):
     def paths(self):
         return self._get_property('paths')
 
-class ReviewsPage(BasicPage):
+class ReviewsPage(XPathPage):
     type_page = 'reviews'
 
     def __init__(self, *args, **kwargs):

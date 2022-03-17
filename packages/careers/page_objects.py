@@ -1,7 +1,7 @@
-from packages.core.scraper.page_objects import BasicPage
+from packages.core.scraper.page_objects import XPathPage
 
 
-class CareersPage(BasicPage):
+class CareersPage(XPathPage):
     type_page = 'careers'
 
     @property

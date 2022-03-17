@@ -1,11 +1,11 @@
 from logging import getLogger
-from packages.core.scraper.page_objects import BasicPage
+from packages.core.scraper.page_objects import XPathPage
 from packages.core.utils.datetime import str_to_seg
 
 logger = getLogger('log_print')
 
 
-class LessonsPage(BasicPage):
+class LessonsPage(XPathPage):
     type_page = 'lessons'
 
     @property
@@ -21,7 +21,7 @@ class LessonsPage(BasicPage):
         return map(str_to_seg, self._get_property('durations'))
 
 
-class CommentsPage(BasicPage):
+class CommentsPage(XPathPage):
     type_page = 'comments'
 
     @property
