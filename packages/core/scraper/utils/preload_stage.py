@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, List
 from json import loads as json_loads
 from logging import getLogger
 
@@ -103,7 +103,7 @@ def get_single_value(raw_base: Union[str, int, dict], attr_map: Optional[dict]) 
     return {key: resolve(raw_base, value) for key, value in attr_map.items()}
 
 
-def get_value_list(raw_base: list, attr_map: dict) -> list[Union[str, int, dict]]:
+def get_value_list(raw_base: list, attr_map: dict) -> List[Union[str, int, dict]]:
     """Build List of attributes from raw_base and attr_map.
 
     Args:

@@ -1,7 +1,6 @@
 import glob
 import importlib
 from .utils.singleton import SingletonClass
-import logging
 
 
 class ModuleManager(metaclass=SingletonClass):
