@@ -1,10 +1,8 @@
 category:
   path_base: "/cursos/"
-
   paths:
     multiple: True
     xpath: "//a[@class='CourseCategories-item']/@href"
-
   names:
       multiple: True
       xpath: "//div[@class='CourseCategories-courses']/h2/text()"
@@ -13,7 +11,6 @@ courses:
   paths:
     multiple: True
     xpath: "//a[@class='RoutesList-item']/@href"
-
   names:
       multiple: True
       xpath: "//h4[@class='RoutesList-item-name']/text()"
@@ -22,7 +19,6 @@ careers:
   paths:
       multiple: True
       xpath: "//a[@class='LearningPathItem']/@href"
-
   names:
       multiple: True
       xpath: "//div[@class='LearningPathItem-elements']/h2/text()"
@@ -31,15 +27,12 @@ reviews:
   user_profiles:
       multiple: True
       xpath: "//a[@class='ReviewCard-username']/@href"
-
   bodies:
       multiple: True
       xpath: "//p[@class='ReviewCard-description']/text()"
-
   full_stars:
       multiple: True
       xpath: "//div[@class='ReviewsContent']//article[@class='ReviewCard' and position() = {review_number} ]//div[@class='Stars']/*[@data-prefix='fas' and @data-icon='star']"
-
   half_star:
       multiple: False
       xpath: "//div[@class='ReviewsContent']//article[@class='ReviewCard' and position() = {review_number} ]//div[@class='Stars']/*[@data-icon='star-half-alt']"
@@ -60,3 +53,30 @@ lessons:
   durations:
       multiple: True
       xpath: "//div[@class='Tabs']//div[@class='ContentClass-item']/a/@href"
+
+comments:
+  multiple: true
+  path: 'community,contributions,cards'
+  attributes:
+    user:
+      multiple: false
+      path: author
+      attributes:
+        role:
+          multiple: false
+          path: role
+        avatar:
+          multiple: false
+          path: avatar
+    likes:
+      multiple: false
+      path: nLikes
+    writed_at:
+      multiple: false
+      path: timestamp
+    content:
+      multiple: false
+      path: content
+    external_id:
+      multiple: false
+      path: id

@@ -6,7 +6,7 @@ from packages.courses.models import Course
 from packages.users.models import  User
 
 from .models import Lesson, Comment
-from .page_objects import LessonsPage
+from .page_objects import LessonsPage, CommentsPage
 
 logger = logging.getLogger('log_print')
 
