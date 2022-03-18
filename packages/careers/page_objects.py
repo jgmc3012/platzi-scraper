@@ -2,7 +2,6 @@ from packages.core.scraper.page_objects import XPathPage
 
 
 class CareersPage(XPathPage):
-    type_page = 'careers'
 
     @property
     def names(self):

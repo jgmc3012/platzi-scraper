@@ -1,12 +1,14 @@
 from asyncio.log import logger
+from logging import getLogger
+from typing import Tuple, Type, TypeVar
+
+from tortoise import fields
 from tortoise.exceptions import TransactionManagementError
 from tortoise.models import Model
-from tortoise import fields
-from typing import Type, Tuple, TypeVar
-from logging import getLogger
 
-CATEGORY  = TypeVar("CATEGORY", bound="Category")
+CATEGORY = TypeVar("CATEGORY", bound="Category")
 logger = getLogger('log_print')
+
 
 class Category(Model):
     id = fields.IntField(pk=True)
@@ -23,5 +25,6 @@ class Category(Model):
         except TransactionManagementError as e:
             for key, value in kwargs.items():
                 if await cls.exists(**{key: value}):
-                    logger.error(f"Category with the '{key}' equal to '{value}' already exists on DB")
+                    logger.error(
+                        f"Category with the '{key}' equal to '{value}' already exists on DB")
                     break

@@ -1,0 +1,7 @@
+path_base: "/cursos/"
+paths:
+  multiple: True
+  xpath: "//a[@class='CourseCategories-item']/@href"
+names:
+    multiple: True
+    xpath: "//div[@class='CourseCategories-courses']/h2/text()"

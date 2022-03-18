@@ -1,21 +1,20 @@
 from cleo import Command
 from packages.core.utils.app_loop import AppLoop
 
-from .ctrls import LessonsScraper
+from .ctrls import ReviewsScraper
 
 class AllCommands:
 
-
     class Scraper(Command):
         """
-        Scraper platzi lessons
+        Scraper review for all courses
 
-        lessons:scraper
+        reviews:scraper
         {--browser-profile-name= : profile-name}
         """
 
         def handle(self):
             browser_profile_name = self.option('browser-profile-name')
             AppLoop().get_loop().run_until_complete(
-                LessonsScraper(browser_profile_name).run()
+                ReviewsScraper(browser_profile_name).run()
             )

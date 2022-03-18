@@ -1,0 +1,18 @@
+user_profiles:
+    multiple: True
+    xpath: "//a[@class='ReviewCard-username']/@href"
+bodies:
+    multiple: True
+    xpath: "//p[@class='ReviewCard-description']/text()"
+full_stars:
+    multiple: True
+    xpath: "//div[@class='ReviewsContent']//article[@class='ReviewCard' and position() = {review_number} ]//div[@class='Stars']/*[@data-prefix='fas' and @data-icon='star']"
+half_star:
+    multiple: False
+    xpath: "//div[@class='ReviewsContent']//article[@class='ReviewCard' and position() = {review_number} ]//div[@class='Stars']/*[@data-icon='star-half-alt']"
+total_pages:
+    multiple: False
+    xpath: "//li[contains(@class, 'Pagination-item') and position()=last()-1]//a/text()"
+total_reviews:
+    multiple: False
+    xpath: "//div[@class='CourseExtraInfo-content']//a//p[position() = 1]/text()"

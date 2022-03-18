@@ -1,0 +1,9 @@
+titles:
+  multiple: True
+  xpath: "//div[@class='Tabs']//div[@class='ContentClass-item-content']/h5/text()"
+paths:
+    multiple: True
+    xpath: "//a[@class='LearningPathItem']/@href"
+durations:
+    multiple: True
+    xpath: "//div[@class='Tabs']//div[@class='ContentClass-item']/a/@href"

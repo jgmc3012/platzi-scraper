@@ -1,8 +1,9 @@
 import logging
-from packages.core.scraper.ctrls  import CtrlPyppetterScraper
-from .page_objects import CategoriesPage
-from .models import Category
 
+from packages.core.scraper.ctrls import CtrlPyppetterScraper
+
+from .models import Category
+from .page_objects import CategoriesPage
 
 logger = logging.getLogger('log_print')
 

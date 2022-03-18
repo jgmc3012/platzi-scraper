@@ -1,0 +1,6 @@
+paths:
+  multiple: True
+  xpath: "//a[@class='RoutesList-item']/@href"
+names:
+    multiple: True
+    xpath: "//h4[@class='RoutesList-item-name']/text()"

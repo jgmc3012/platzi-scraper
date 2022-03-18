@@ -6,7 +6,7 @@ from .ctrls import CategoriesScraper
 class AllCommands:
 
 
-    class ScraperCategories(Command):
+    class Scraper(Command):
         """
         Scraper platzi categories
 

@@ -2,7 +2,6 @@ from packages.core.scraper.page_objects import XPathPage
 
 
 class CategoriesPage(XPathPage):
-    type_page = 'category'
 
     @property
     def names(self):

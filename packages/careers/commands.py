@@ -1,11 +1,12 @@
 from cleo import Command
 from packages.core.utils.app_loop import AppLoop
+
 from .ctrls import CareersScraper
+
 
 class AllCommands:
 
-
-    class ScraperCareers(Command):
+    class Scraper(Command):
         """
         Scraper platzi careers
 

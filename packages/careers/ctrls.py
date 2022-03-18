@@ -1,11 +1,11 @@
-import logging
 import asyncio
-from packages.core.scraper.ctrls  import CtrlPyppetterScraper
+import logging
+
 from packages.categories.models import Category
+from packages.core.scraper.ctrls import CtrlPyppetterScraper
 
-from .page_objects import CareersPage
 from .models import Career
-
+from .page_objects import CareersPage
 
 logger = logging.getLogger('log_print')
 

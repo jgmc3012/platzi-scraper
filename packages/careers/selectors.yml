@@ -1,0 +1,6 @@
+paths:
+    multiple: True
+    xpath: "//a[@class='LearningPathItem']/@href"
+names:
+    multiple: True
+    xpath: "//div[@class='LearningPathItem-elements']/h2/text()"
