@@ -8,7 +8,7 @@ class AllCommands:
 
     class Scraper(Command):
         """
-        Scraper platzi careers
+        Scraper platzi careers for all categories
 
         careers:scraper
         {--browser-profile-name= : profile-name}

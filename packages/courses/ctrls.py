@@ -25,6 +25,7 @@ class CoursesScraper(CtrlPyppetterScraper):
         courses = CoursesPage(html, url)
         logger.info(f"Saving data from {url}")
         for row in zip(courses.names, courses.paths):
+            # TODO: [FEATURE] Include teacher and release date
             logger.debug(f"Get or create Course {row[0]}")
             course, _ = await Course.get_or_create(
                 name=row[0],
