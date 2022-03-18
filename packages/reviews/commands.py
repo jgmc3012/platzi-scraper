@@ -10,11 +10,9 @@ class AllCommands:
         Scraper review for all courses
 
         reviews:scraper
-        {--browser-profile-name= : profile-name}
         """
 
         def handle(self):
-            browser_profile_name = self.option('browser-profile-name')
             AppLoop().get_loop().run_until_complete(
-                ReviewsScraper(browser_profile_name).run()
+                ReviewsScraper().run()
             )

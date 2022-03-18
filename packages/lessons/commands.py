@@ -11,11 +11,9 @@ class AllCommands:
         Scraper platzi lessons
 
         lessons:scraper
-        {--browser-profile-name= : profile-name}
         """
 
         def handle(self):
-            browser_profile_name = self.option('browser-profile-name')
             AppLoop().get_loop().run_until_complete(
-                LessonsScraper(browser_profile_name).run()
+                LessonsScraper().run()
             )

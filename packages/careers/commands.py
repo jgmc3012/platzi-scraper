@@ -11,11 +11,9 @@ class AllCommands:
         Scraper platzi careers for all categories
 
         careers:scraper
-        {--browser-profile-name= : profile-name}
         """
 
         def handle(self):
-            browser_profile_name = self.option('browser-profile-name')
             AppLoop().get_loop().run_until_complete(
-                CareersScraper(browser_profile_name).run()
+                CareersScraper().run()
             )

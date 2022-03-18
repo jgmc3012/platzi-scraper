@@ -1,37 +1,38 @@
-from pyppeteer import launch, connect, errors
 import asyncio
-import re
-import os
-from packages.core.utils.singleton import SingletonClass
-from sys import platform
-from glob import glob
-from pathlib import Path
 import json
-import yaml
+import os
+import re
 import socket
-from os import environ
+from glob import glob
 from logging import getLogger
+from os import environ
+from pathlib import Path
+from sys import platform
+
+import yaml
+from packages.core.utils.singleton import SingletonClass
+from pyppeteer import connect, errors, launch
 
 logger = getLogger('log_print')
-DEFAULT_PROFILE = 'Private'
+
 
 class MyPyppeteer(metaclass=SingletonClass):
     """
     Clase para simular la navegacion de un usuario en un navegador
     """
+    profile = 'Person 1' # This is profile by default when you install chrome
 
-    def __init__(self, profile=None):
+    def __init__(self):
         self.browser = None
         self.oppener = False
         self.max_opened_tabs = 50
         self._yaml = {}
         self.yaml_name = 'storage/pyppetter_browsers.yaml'
-        self.profile = profile or DEFAULT_PROFILE
         self._profile_dir = ''
         self.ws = None
         self.rotate_enabled = False
         self.TimeoutDefault = 0
-        self.pool = {'availables':list()}
+        self.pool = {'availables': list()}
         self.flags = [
             '--window-size=1400,980',
             '--no-default-browser-check',
@@ -42,12 +43,14 @@ class MyPyppeteer(metaclass=SingletonClass):
 
             '--disable-add-to-shelf',
             '--disable-background-downloads',
-            '--disable-breakpad',  # Disable crashdump collection (reporting is already disabled in Chromium)
+            # Disable crashdump collection (reporting is already disabled in Chromium)
+            '--disable-breakpad',
             '--disable-component-update',
             '--disable-datasaver-prompt',
             '--disable-desktop-notifications',
             '--disable-domain-reliability',
-            '--disable-features=site-per-process',  # Disables OOPIF. https://www.chromium.org/Home/chromium-security/site-isolation
+            # Disables OOPIF. https://www.chromium.org/Home/chromium-security/site-isolation
+            '--disable-features=site-per-process',
             '--disable-hang-monitor',
             '--disable-notifications',
             '--disable-sync',
@@ -71,7 +74,7 @@ class MyPyppeteer(metaclass=SingletonClass):
                 self._yaml = self._yaml if self._yaml else {}
         return self._yaml
 
-    async def init_pool_pages(self, number_pages:int)->dict:
+    async def init_pool_pages(self, number_pages: int) -> dict:
         if not self.browser:
             await self.connect_browser()
         for i in range(number_pages):
@@ -83,7 +86,7 @@ class MyPyppeteer(metaclass=SingletonClass):
     async def close_pool(self, number_pages):
         """Close number_pages tab on browser"""
         for _ in range(number_pages):
-            page_id, page = self.get_page_pool()            
+            page_id, page = self.get_page_pool()
             await page.close()
 
     async def change_page(self, page):
@@ -91,10 +94,11 @@ class MyPyppeteer(metaclass=SingletonClass):
             if (page_index != 'availables') and (self.pool.get(page_index) == page):
                 await page.close()
                 self.pool[page_index] = await self.browser.newPage()
-                self.pool[page_index].setDefaultNavigationTimeout(self.TimeoutDefault)
+                self.pool[page_index].setDefaultNavigationTimeout(
+                    self.TimeoutDefault)
                 return self.pool[page_index]
 
-    def get_page_pool(self)->tuple:
+    def get_page_pool(self) -> tuple:
         """
         Return:
             - id_page: El id de la pagina que se retorna(esta valor debe ser paso en el close_page_pool)
@@ -114,6 +118,7 @@ class MyPyppeteer(metaclass=SingletonClass):
         return re.sub(r'\d+\.\d+\.\d+\.\d+', environ['BROWSER_IP'], ws, 1)
 
     def set_ws_profile(self, ws):
+        # TODO: Multi-browser -> Save ws in redis with key as docker_id
         self.yaml[self.profile] = ws
         with open(self.yaml_name, 'w') as fp:
             yaml.dump(self.yaml, fp, default_flow_style=False)
@@ -122,7 +127,7 @@ class MyPyppeteer(metaclass=SingletonClass):
         if not self.ws:
             return False
 
-        address =re.search(r'ws://(.+):(\d+)/', self.ws)
+        address = re.search(r'ws://(.+):(\d+)/', self.ws)
         ip = address.group(1)
         port = int(address.group(2))
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -158,7 +163,7 @@ class MyPyppeteer(metaclass=SingletonClass):
         for attr, value in kwargs.items():
             await page.evaluate(f'(obj) => obj.{attr} = "{value}"', obj)
 
-    async def get_property_from_querySelector(self, selector:str, attr:str, page=None):
+    async def get_property_from_querySelector(self, selector: str, attr: str, page=None):
         if not page:
             page = self.page
         return await page.evaluate('''() => {{
@@ -166,15 +171,15 @@ class MyPyppeteer(metaclass=SingletonClass):
             if (obj) {{
                 return obj.{attr}
             }}
-        }}'''.format(selector=selector,attr=attr))
+        }}'''.format(selector=selector, attr=attr))
 
-    async def get_property_from_querySelectorAll(self, selector:str, attr:str, page=None):
+    async def get_property_from_querySelectorAll(self, selector: str, attr: str, page=None):
         if not page:
             page = self.page
         return await page.evaluate('''() => {{
             obj = document.querySelectorAll('{selector}')
             return Array.from(obj).map(node => node.{attr})
-        }}'''.format(selector=selector,attr=attr))
+        }}'''.format(selector=selector, attr=attr))
 
     async def count_pages(self):
         self.browser, self.page = await MyPyppeteer().connect_browser()
@@ -207,9 +212,11 @@ class MyPyppeteer(metaclass=SingletonClass):
                 glob(f'{os.getcwd()}/storage/*/Preferences')
             )
         elif platform == "darwin":  # mac
-            paths = glob(f'{Path.home()}/Library/Application Support/Google/Chrome/*/Preferences')
+            paths = glob(
+                f'{Path.home()}/Library/Application Support/Google/Chrome/*/Preferences')
         elif platform == "win32":  # Windows
-            paths = glob(f'{Path.home()}\\AppData\\Local\\Chromium\\User Data\\*\\Preferences')
+            paths = glob(
+                f'{Path.home()}\\AppData\\Local\\Chromium\\User Data\\*\\Preferences')
 
         profile_names = []
         for path in paths:
@@ -221,11 +228,9 @@ class MyPyppeteer(metaclass=SingletonClass):
                     self._profile_dir = str(Path(path).parent)
                     break
 
-        if not self._profile_dir and self.profile != DEFAULT_PROFILE:
+        if not self._profile_dir:
             logger.error(
                 f'Please, create a new profile with "{self.profile}" as name.'
-                ' Or choose one of the following: '
-                f"[{', '.join(profile_names)}]"
             )
             exit(1)
         return self._profile_dir
@@ -233,20 +238,22 @@ class MyPyppeteer(metaclass=SingletonClass):
     async def launch_browser(self, **extra_parameters):
         parameters = {'headless': True, 'args': self.flags, **extra_parameters}
         if self.get_profile_dir():
-            parameters['args'] += [f'--profile-directory={Path(self.get_profile_dir()).name}']
-            parameters['userDataDir'] = str(Path(self.get_profile_dir()).parent)
+            parameters['args'] += [
+                f'--profile-directory={Path(self.get_profile_dir()).name}']
+            parameters['userDataDir'] = str(
+                Path(self.get_profile_dir()).parent)
         try:
             return await launch(**parameters)
         except errors.BrowserError as e:
             if not parameters['headless']:
-                logger.error('Not is posible to launch the browser. Is you try to open browser in a environment without graphical interface?')
+                logger.error(
+                    'Not is posible to launch the browser. Is you try to open browser in a environment without graphical interface?')
             raise e
 
     async def open_browser(self, daemon=True, **kwargs):
         # https://github.com/GoogleChrome/chrome-launcher/blob/master/docs/chrome-flags-for-tools.md
 
         _ = kwargs.pop('args', [])
-        self.profile = kwargs.pop('profile_name', self.profile)
         self.browser = await self.launch_browser(**kwargs)
         self.oppener = True
         return await self.get_connection(daemon)
@@ -256,9 +263,11 @@ class MyPyppeteer(metaclass=SingletonClass):
             count_tabs = len(await self.browser.pages())
             if count_tabs < self.max_opened_tabs:
                 return await self.browser.newPage()
-            print(f'pyppetter {count_tabs} de {self.max_opened_tabs} tabs abiertos,Esperando 5 segundos')
+            print(
+                f'pyppetter {count_tabs} de {self.max_opened_tabs} tabs abiertos,Esperando 5 segundos')
             await asyncio.sleep(5)
-        raise Exception('despues de 50 segundos, No hay espacio para abrir un nuevo tab')
+        raise Exception(
+            'despues de 50 segundos, No hay espacio para abrir un nuevo tab')
 
     async def click_and_wait(self, obj, **kwargs):
         ''' los kwargs son pra waitForNavigation'''
@@ -285,7 +294,7 @@ class MyPyppeteer(metaclass=SingletonClass):
 
     async def start_rotate_pages(self):
         self.rotate_enabled = True
-        browser,_  = await self.connect_browser()
+        browser, _ = await self.connect_browser()
         for _ in range(1000):
             pages = await browser.pages()
             if not self.rotate_enabled:

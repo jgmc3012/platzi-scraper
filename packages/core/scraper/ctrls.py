@@ -78,10 +78,10 @@ class CtrlPyppetterScraper:
     USER_AGENT = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:87.0) Gecko/20100101 Firefox/87.0"
     URL_BASE = "https://platzi.com"
 
-    def __init__(self, client_profile=None, sem:int=3):
+    def __init__(self, sem:int=3):
         self.sem = asyncio.Semaphore(sem)
         self.lock = asyncio.locks.Lock()
-        self.client = MyPyppeteer(client_profile)
+        self.client = MyPyppeteer()
         self.number_pages = sem
         self.running_client = False
 
