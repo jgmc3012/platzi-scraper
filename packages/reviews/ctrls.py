@@ -6,7 +6,7 @@ from packages.core.scraper.ctrls import CtrlPyppetterScraper
 from packages.users.models import User
 from packages.courses.models import Course
 
-from .models import Course, Review
+from .models import Review
 from .page_objects import ReviewsPage
 
 logger = getLogger('log_print')

@@ -10,6 +10,11 @@ logger = logging.getLogger('log_print')
 
 class BasicPage:
 
+    def __init__(self, html: str, url: str):
+        logger.debug(f"Init Scraper url - {url}")
+        self._raw_html = html
+        self._url = url
+
     def _save_html(self):
         with open(f'{os.getcwd()}/storage/{self._url.replace("/","")}.html', 'w+') as f:
             f.write(self._raw_html)
@@ -23,7 +28,7 @@ class XPathPage(BasicPage):
 
     def __init__(self, *args, **kwargs):
         self._properties = dict()
-        super().__init__(args, kwargs)
+        super().__init__(*args, **kwargs)
 
     @property
     def _parsed_html(self):

@@ -2,9 +2,10 @@ import asyncio
 import logging
 
 from packages.core.scraper.ctrls import CtrlPyppetterScraper
+from packages.lessons.models import Lesson
 from packages.users.models import User
 
-from .models import Comment, Lesson
+from .models import Comment
 from .page_objects import CommentsPage
 
 logger = logging.getLogger('log_print')

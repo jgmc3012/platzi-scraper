@@ -7,7 +7,7 @@ import inspect
 class Selector(metaclass=SingletonClass):
     _config_ = dict()
 
-    def get_selector(self, Class):
+    def get(self, Class):
         if not self._config_.get(Class):
             path = f'{os.path.dirname(inspect.getfile(Class))}/selectors.yml'
             with open(path, "r") as stream:
