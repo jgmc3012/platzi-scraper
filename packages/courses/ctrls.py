@@ -24,13 +24,13 @@ class CoursesScraper(CtrlPyppetterScraper):
         html = await self.visit_page(url)
         courses = CoursesPage(html, url)
         logger.info(f"Saving data from {url}")
-        for properties in courses.resolve():
-            lessons_props = properties.pop('lessons')
+        properties = courses.resolve()
+        lessons_props = properties.pop('lessons')
 
-            properties['teacher'], _ = await User.get_or_create(**properties['teacher'])
-            course, _ = await Course.update_or_create(**properties)
+        properties['teacher'], _ = await User.get_or_create(**properties['teacher'])
+        course, _ = await Course.update_or_create(**properties)
 
-            lessons_props = map(lambda x: x.update({'course': course}), lessons_props)
-            await asyncio.gather(*(
-                Lesson.update_or_create(**properties) for properties in lessons_props
-            ))
+        lessons_props = map(lambda x: x.update({'course': course}), lessons_props)
+        await asyncio.gather(*(
+            Lesson.update_or_create(**properties) for properties in lessons_props
+        ))

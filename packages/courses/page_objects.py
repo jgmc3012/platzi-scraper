@@ -13,15 +13,16 @@ class CoursesPage(JsonPage):
 
     def resolve(self):
         if not hasattr(self, '_resolved'):
-            self._resolved = map(self._transform, self.state)
+            self._resolved = self._course_properties
         return self._resolved
 
-    def _transform(self, course: dict):
-        """Update format of course to match database
+    def _course_properties(self):
+        """Update format of course(state) to match database
 
         Args:
             course (dict): course to transform
         """
+        course = self.state
         course['release'] = str_to_datetime(course['release'])
         course['teacher']['username'] = url_to_username(
             course['teacher'].pop('path'))
