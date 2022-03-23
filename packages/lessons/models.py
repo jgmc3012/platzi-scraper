@@ -13,6 +13,8 @@ class Lesson(Model):
     path = fields.CharField(max_length=150, unique=True)
     course = fields.ForeignKeyField('courses.Course', related_name='lessons')
     duration_in_seg = fields.IntField()
+    external_id = fields.CharField(50)
+    type = fields.CharField(max_length=50)
 
     def __str__(self):
         return f"Lesson({self.title})"

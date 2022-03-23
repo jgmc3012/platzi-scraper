@@ -1,6 +1,51 @@
-paths:
-  multiple: True
-  xpath: "//a[@class='RoutesList-item']/@href"
-names:
-    multiple: True
-    xpath: "//h4[@class='RoutesList-item-name']/text()"
+multiple: false
+path: 'courses.course'
+attributes:
+  teacher:
+    multiple: false
+    path: teacher
+    attributes:
+      name:
+        multiple: false
+        path: name
+      profile:
+        multiple: false
+        path: url
+  release:
+    multiple: false
+    path: launchDate
+  external_id:
+    multiple: false
+    path: courseId
+  type:
+    multiple: false
+    path: 'courseType'
+  path:
+    multiple: false
+    path: 'url'
+  title:
+    multiple: false
+    path: title
+  captions:
+    multiple: true
+    path: content
+    attributes:
+      lessons:
+        multiple: true
+        path: feed
+        attributes:
+          type:
+            multiple: false
+            path: materialType
+          path:
+            multiple: false
+            path: url
+          duration_in_seg:
+            multiple: false
+            path: duration
+          title:
+            multiple: false
+            path: title
+          external_id:
+            multiple: false
+            path: id

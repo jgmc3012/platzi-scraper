@@ -17,7 +17,7 @@ class Comment(Model):
     content = fields.TextField()
     writed_at = fields.DatetimeField()
     likes = fields.IntField()
-    external_id = fields.CharField(100)
+    external_id = fields.CharField(50)
 
     def __str__(self):
         return f'Comment({self.author}: {self.content[:20]}...)'
