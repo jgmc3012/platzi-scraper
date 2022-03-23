@@ -22,7 +22,7 @@ class CoursesPage(JsonPage):
             course = self.state
             course['release'] = str_to_datetime(course['release'])
             course['teacher']['username'] = url_to_username(course['teacher'].pop('path'))
-            course['teacher']['rol'] = 'teacher'
+            course['teacher']['role'] = 'teacher'
 
             lessons = reduce((lambda memo, cap: memo + cap['lessons']), course.pop('captions'), [])
             course['lessons'] = filter(lambda lesson: bool(lesson.get('id')), lessons)

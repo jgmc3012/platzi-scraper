@@ -1,7 +1,7 @@
-from time import strptime, struct_time
+from datetime import datetime
 
 
-def str_to_datetime(string: str)-> struct_time:
+def str_to_datetime(string: str)-> datetime:
     """Transforms string like '2020-05-07T01:00:00Z' to struct_time
 
     Args:
@@ -10,4 +10,4 @@ def str_to_datetime(string: str)-> struct_time:
     Returns:
         struct_time: datetime
     """
-    return strptime(string, '%Y-%m-%dT%H:%M:%SZ')
+    return datetime.strptime(string, '%Y-%m-%dT%H:%M:%SZ')

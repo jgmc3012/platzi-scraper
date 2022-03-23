@@ -13,7 +13,8 @@ CREATE TABLE IF NOT EXISTS "career" (
 CREATE TABLE IF NOT EXISTS "user_profile" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "username" VARCHAR(100) NOT NULL UNIQUE,
-    "role" VARCHAR(50) NOT NULL
+    "role" VARCHAR(50) NOT NULL,
+    "name" VARCHAR(100)
 );
 CREATE TABLE IF NOT EXISTS "course" (
     "id" SERIAL NOT NULL PRIMARY KEY,
@@ -38,8 +39,8 @@ CREATE TABLE IF NOT EXISTS "review" (
     "id" SERIAL NOT NULL PRIMARY KEY,
     "comment" TEXT NOT NULL,
     "stars" DECIMAL(2,1) NOT NULL,
-    "course_id" INT NOT NULL REFERENCES "course" ("id") ON DELETE CASCADE,
     "user_id" INT NOT NULL REFERENCES "user_profile" ("id") ON DELETE CASCADE,
+    "course_id" INT NOT NULL REFERENCES "course" ("id") ON DELETE CASCADE,
     CONSTRAINT "uid_review_course__13bc82" UNIQUE ("course_id", "user_id")
 );
 CREATE TABLE IF NOT EXISTS "aerich" (
