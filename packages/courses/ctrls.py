@@ -13,6 +13,8 @@ logger = getLogger('log_print')
 class CoursesScraper(CtrlPyppetterScraper):
 
     async def run(self):
+        raise NotImplementedError
+
         await self.init_client()
         careers = await Career.all()
         coros = [self.scraper_courses(career) for career in careers]
@@ -24,10 +26,10 @@ class CoursesScraper(CtrlPyppetterScraper):
         html = await self.visit_page(url)
         courses = CoursesPage(html, url)
         logger.info(f"Saving data from {url}")
-        for row in zip(courses.names, courses.paths):
+        for course in courses.resolve():
             # TODO: [FEATURE] Include teacher and release date
             logger.debug(f"Get or create Course {row[0]}")
-            course, _ = await Course.get_or_create(
+            course = await Course.get_and_update(
                 name=row[0],
                 path=row[1],
             )

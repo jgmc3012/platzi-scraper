@@ -1,0 +1,16 @@
+multiple: true
+path: 'steps'
+attributes:
+    courses:
+        multiple: true
+        path: 'courses'
+        attributes:
+            external_id:
+                multiple: false
+                path: 'id'
+            title: 
+                multiple: false
+                path: 'title'
+            path:
+                multiple: false
+                path: 'url'
