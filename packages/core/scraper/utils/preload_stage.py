@@ -100,7 +100,7 @@ def get_single_value(raw_base: Union[str, int, dict], attr_map: Optional[dict]) 
     """
     if not attr_map:
         return raw_base
-    return {key: resolve(raw_base, value) for key, value in attr_map.items()}
+    return {key: resolve(value, raw_base) for key, value in attr_map.items()}
 
 
 def get_value_list(raw_base: list, attr_map: dict) -> List[Union[str, int, dict]]:
