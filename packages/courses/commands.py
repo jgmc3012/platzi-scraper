@@ -8,7 +8,7 @@ class AllCommands:
 
     class Scraper(Command):
         """
-        Create and linked all careers with their courses
+        Update course and create lessons
 
         courses:scraper
         """

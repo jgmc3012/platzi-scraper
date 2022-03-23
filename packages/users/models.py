@@ -3,7 +3,9 @@ from logging import getLogger
 from tortoise import fields
 from tortoise.exceptions import DoesNotExist, IntegrityError
 from tortoise.models import Model
+from typing import Tuple, Type, TypeVar
 
+USER = TypeVar("USER", bound="User")
 logger = getLogger('log_print')
 
 class User(Model):
@@ -15,31 +17,28 @@ class User(Model):
         return self.username
 
     @classmethod
-    async def get_or_create(cls, username: str):
+    async def get_or_create(cls, username: str, **kwargs) -> Tuple[Type[USER], bool]:
         """Get or create user by username
 
         Args:
             username (str): username of user
+            **kwargs: additional fields
 
         Returns:
             (User, bool): user and created flag
         """
-        logger.debug(f"Get or create Review by {username}")
-
+        logger.debug(f"Get or create User {username}")
         try:
             user = await cls.get(username=username)
             return user, False
         except DoesNotExist:
-            pass
-
-        try:
-            user = await cls.create(username=username)
-        except IntegrityError as err:
-            logger.error(f"{err} - Cant Create User ({username})")
-            return None, False
-
-        logger.debug(f"User({user}) created")
-        return user, True
+            try:
+                user = await cls.create(username=username, **kwargs)
+                logger.debug(f"User({user}) created")
+                return user, True
+            except IntegrityError as err:
+                logger.error(f"{err} - Cant Create User ({username})")
+                return None, False
 
     class Meta:
         table = "user_profile"

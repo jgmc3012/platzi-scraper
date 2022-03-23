@@ -2,7 +2,7 @@ from logging import getLogger
 
 from tortoise.models import Model
 from tortoise import fields
-from tortoise.exceptions import DoesNotExist
+from tortoise.exceptions import DoesNotExist, IntegrityError
 from typing import Tuple, Type, TypeVar
 
 COURSE = TypeVar("COURSE", bound="Course")
@@ -23,14 +23,18 @@ class Course(Model):
     
     @classmethod
     async def update_or_create(cls, external_id, **kwargs)-> Tuple[Type[COURSE], bool]:
+        logger.debug(f"Update course {kwargs.get('title', external_id)}")
         try:
             course = await cls.get(external_id=external_id)
         except DoesNotExist:
-            course = await cls.create(external_id=external_id, **kwargs)
+            try:
+                course = await cls.create(external_id=external_id, **kwargs)
+            except IntegrityError as err:
+                logger.error(f"{err} - Cant Create Course ({kwargs.get('title', external_id)})")
+                return None, False
             return course, True
 
-        course.update_from_dict(kwargs)
-        await course.save()
+        await course.update_from_dict(kwargs).save()
         return course, False
 
     def __str__(self):

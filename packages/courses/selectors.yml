@@ -8,7 +8,7 @@ attributes:
       name:
         multiple: false
         path: name
-      profile:
+      path:
         multiple: false
         path: url
   release:

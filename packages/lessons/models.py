@@ -3,7 +3,9 @@ from logging import getLogger
 from tortoise import fields
 from tortoise.exceptions import DoesNotExist, IntegrityError
 from tortoise.models import Model
+from typing import Tuple, Type, TypeVar
 
+LESSON = TypeVar("LESSON", bound="Lesson")
 logger = getLogger('log_print')
 
 class Lesson(Model):
@@ -21,23 +23,21 @@ class Lesson(Model):
 
 
     @classmethod
-    async def get_or_create(cls, title, course, path, duration_in_seg, track_number):
-        logger.debug(f"Get or create Lesson {title}")
+    async def get_or_create(cls, *args, **kwargs):
+        raise NotImplementedError
+    
+    @classmethod
+    async def update_or_create(cls, external_id, **kwargs)-> Tuple[Type[LESSON], bool]:
+        logger.debug(f"Update or create Lesson {kwargs.get('title', external_id)}")
         try:
-            lesson = await cls.get(title=title, course=course)
-            return lesson, False
+            lesson = await cls.get(external_id=external_id)
         except DoesNotExist:
-            pass
+            try:
+                lesson = await cls.create(external_id=external_id, **kwargs)
+                return lesson, True
+            except IntegrityError as err:
+                logger.error(f"{err} - Cant Create Lesson ({kwargs.get('title', external_id)})")
+                return None, False
 
-        try:
-            lesson = await cls.create(
-                title=title, course=course, path=path,
-                duration_in_seg=duration_in_seg,
-                track_number=track_number
-            )
-        except IntegrityError as err:
-            logger.error(f"{err} - Cant Create Lesson ({title})")
-            return None, False
-
-        logger.debug(f"{lesson} created")
-        return lesson, True
+        await lesson.update_from_dict(kwargs).save()
+        return lesson, False
