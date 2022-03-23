@@ -14,7 +14,8 @@ class User(Model):
     def __str__(self):
         return self.username
 
-    async def get_or_create(self, username: str):
+    @classmethod
+    async def get_or_create(cls, username: str):
         """Get or create user by username
 
         Args:
@@ -26,13 +27,13 @@ class User(Model):
         logger.debug(f"Get or create Review by {username}")
 
         try:
-            user = await self.get(username=username)
+            user = await cls.get(username=username)
             return user, False
         except DoesNotExist:
             pass
 
         try:
-            user = await self.create(username=username)
+            user = await cls.create(username=username)
         except IntegrityError as err:
             logger.error(f"{err} - Cant Create User ({username})")
             return None, False

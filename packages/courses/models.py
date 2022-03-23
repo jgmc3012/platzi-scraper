@@ -2,7 +2,10 @@ from logging import getLogger
 
 from tortoise.models import Model
 from tortoise import fields
+from tortoise.exceptions import DoesNotExist
+from typing import Tuple, Type, TypeVar
 
+COURSE = TypeVar("COURSE", bound="Course")
 logger = getLogger('log_print')
 
 class Course(Model):
@@ -12,18 +15,19 @@ class Course(Model):
     careers = fields.ManyToManyField('careers.Career', related_name='courses')
     release = fields.DatetimeField(blank=True, null=True)
     teacher = fields.ForeignKeyField('users.User', related_name='courses', blank=True, null=True)
-    external_id = fields.CharField(50)
-    type = fields.CharField(max_length=50, unique=True)
+    external_id = fields.CharField(50, unique=True)
+    type = fields.CharField(max_length=50, null=True)
 
     async def actives(self):
         raise NotImplementedError
     
-    async def get_or_create(self, external_id, **kwargs):
+    @classmethod
+    async def get_or_create(cls, external_id, **kwargs)-> Tuple[Type[COURSE], bool]:
         try:
-            course = await Course.get(external_id=external_id)
+            course = await cls.get(external_id=external_id)
             return course, False
-        except Course.DoesNotExist:
-            course = await Course.create(external_id=external_id, **kwargs)
+        except DoesNotExist:
+            course = await cls.create(external_id=external_id, **kwargs)
             return course, True
 
     def __str__(self):

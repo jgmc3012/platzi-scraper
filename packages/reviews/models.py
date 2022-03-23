@@ -17,9 +17,10 @@ class Review(Model):
     class Meta:
         unique_together = ("course", "user")
 
-    async def get_or_create(self, course, user, comment, starts):
+    @classmethod
+    async def get_or_create(cls, course, user, comment, starts):
         try:
-            review = await self.get(
+            review = await cls.get(
                 course=course,
                 user=user,
             )

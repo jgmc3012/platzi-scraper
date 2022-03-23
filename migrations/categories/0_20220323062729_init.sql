@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS "course" (
     "title" VARCHAR(100) NOT NULL UNIQUE,
     "path" VARCHAR(150) NOT NULL UNIQUE,
     "release" TIMESTAMPTZ,
-    "external_id" VARCHAR(50) NOT NULL,
-    "type" VARCHAR(50) NOT NULL,
+    "external_id" VARCHAR(50) NOT NULL UNIQUE,
+    "type" VARCHAR(50),
     "teacher_id" INT REFERENCES "user_profile" ("id") ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS "lesson" (

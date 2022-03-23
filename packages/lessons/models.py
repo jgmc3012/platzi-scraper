@@ -20,16 +20,17 @@ class Lesson(Model):
         return f"Lesson({self.title})"
 
 
-    async def get_or_create(self, title, course, path, duration_in_seg, track_number):
+    @classmethod
+    async def get_or_create(cls, title, course, path, duration_in_seg, track_number):
         logger.debug(f"Get or create Lesson {title}")
         try:
-            lesson = await self.get(title=title, course=course)
+            lesson = await cls.get(title=title, course=course)
             return lesson, False
         except DoesNotExist:
             pass
 
         try:
-            lesson = await self.create(
+            lesson = await cls.create(
                 title=title, course=course, path=path,
                 duration_in_seg=duration_in_seg,
                 track_number=track_number

@@ -22,17 +22,18 @@ class Comment(Model):
     def __str__(self):
         return f'Comment({self.author}: {self.content[:20]}...)'
 
-    async def get_or_create(self, lesson, author, content, likes, external_id, father=None):
+    @classmethod
+    async def get_or_create(cls, lesson, author, content, likes, external_id, father=None):
         logger.debug(f"Get or create Comment by {author}")
 
         try:
-            comment = await self.get(lesson=lesson, external_id=external_id)
+            comment = await cls.get(lesson=lesson, external_id=external_id)
             return comment, False
         except DoesNotExist:
             pass
 
         try:
-            comment = await self.create(
+            comment = await cls.create(
                 lesson=lesson, author=author, content=content,
                 likes=likes, external_id=external_id, father=father
             )
