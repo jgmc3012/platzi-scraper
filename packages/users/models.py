@@ -12,6 +12,7 @@ class User(Model):
     id = fields.IntField(pk=True)
     username = fields.CharField(max_length=100, unique=True)
     role = fields.CharField(max_length=50)
+    name = fields.CharField(max_length=100, null=True)
 
     def __str__(self):
         return self.username
