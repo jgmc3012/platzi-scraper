@@ -17,8 +17,8 @@ THIRD_PARTY_APPS = [
 TORTOISE_ORM = {
     "connections": {"default": environ['DATABASE_URL']},
     "apps": {
-            **{app: [f'packages.{app}.models'] for app in APPS},
-            **{app: [f'{app}.models'] for app in THIRD_PARTY_APPS},
+            **{app: {"models": [f'packages.{app}.models'], "default_connection": "default"} for app in APPS},
+            **{app: {"models": [f'{app}.models'], "default_connection": "default"} for app in THIRD_PARTY_APPS},
         },
 }
 
@@ -26,7 +26,10 @@ async def init_db():
 
     await Tortoise.init(
         db_url=TORTOISE_ORM['connections']['default'],
-        modules=TORTOISE_ORM['apps']
+        modules={
+            **{app: [f'packages.{app}.models'] for app in APPS},
+            **{app: [f'{app}.models'] for app in THIRD_PARTY_APPS}
+        }
     )
 
     # Generate the schema
