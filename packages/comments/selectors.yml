@@ -1,5 +1,5 @@
 multiple: true
-path: 'community,contributions,cards'
+path: 'community.contributions.cards'
 attributes:
   user:
     multiple: false

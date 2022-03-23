@@ -10,7 +10,7 @@ class AllCommands:
         """
         Update course and create lessons
 
-        courses:scraper
+        courses:update
         """
 
         def handle(self):

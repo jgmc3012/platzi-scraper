@@ -4,6 +4,9 @@ from logging import getLogger
 
 logger = getLogger('log_print')
 
+class InvalidPath(KeyError):
+    """Exception when path is invalid."""
+
 
 def resolve(attr_map: dict, hash: dict) -> Union[str, int, dict, list]:
     """Get a PRELOAD_STATE and clean it with attr_map. 
@@ -15,7 +18,10 @@ def resolve(attr_map: dict, hash: dict) -> Union[str, int, dict, list]:
     Returns:
         Union[str, int, dict, list]: Hash|List with attributes or just an attribute
     """
-    raw_base = get_value_from_path(attr_map['path'], hash)
+    try:
+        raw_base = get_value_from_path(attr_map['path'], hash)
+    except InvalidPath:
+        raw_base = [] if attr_map['multiple'] else {}
     fill_method = get_value_list if attr_map['multiple'] else get_single_value
 
     return fill_method(raw_base, attr_map.get('attributes'))
@@ -44,19 +50,19 @@ def get_preload_state(html: str) -> dict:
     return {}
 
 
-def _csv_to_path(_csv: str) -> list:
-    """Convert csv string to list of keys.
+def _psv_to_path(_psv: str) -> list:
+    """Convert Point Separated Value to list.
 
-    >>> _csv_to_path('a,b,c')
+    >>> _psv_to_path('a.b.c')
     ['a', 'b', 'c']
 
     Args:
-        _csv (str): csv string
+        _psv (str): psv string
 
     Returns:
         list: list of keys
     """
-    return _csv.split(',')
+    return _psv.split('.')
 
 
 def _go_to_path(path: list, hash: dict) -> Union[str, int, dict, list]:
@@ -71,7 +77,13 @@ def _go_to_path(path: list, hash: dict) -> Union[str, int, dict, list]:
     """
     response = hash
     for key in path:
-        response = response[key]
+        try:
+            response = response[key]
+        except KeyError:
+            msg = f'Invalid path: {path} in {hash} with key: {key}'
+            logger.error(msg)
+            raise InvalidPath(msg)
+
     return response
 
 
@@ -85,7 +97,7 @@ def get_value_from_path(path: str, hash: dict) -> Union[str, int, dict, list]:
     Returns:
         Union[str, int, dict, list]: value of key in hash
     """
-    return _go_to_path(_csv_to_path(path), hash)
+    return _go_to_path(_psv_to_path(path), hash)
 
 
 def get_single_value(raw_base: Union[str, int, dict], attr_map: Optional[dict]) -> Union[str, int, dict]:
