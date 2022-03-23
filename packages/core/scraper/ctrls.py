@@ -92,7 +92,7 @@ class CtrlPyppetterScraper:
                 self.running_client = True
                 await self.client.init_pool_pages(self.number_pages)
 
-    async def visit_page(self, url:str):
+    async def visit_page(self, url:str, js_callback=None):
         """
         Await than semaphore is available.
 
@@ -113,8 +113,15 @@ class CtrlPyppetterScraper:
                     logger.warning(f'Reloading {url}...')
                     await asyncio.sleep(self.number_pages)
                     continue
+                
+                if js_callback:
+                    callback_response = await page.evaluate(js_callback)
 
                 self.client.close_page_pool(page_id)
+
+                if js_callback:
+                    return html, callback_response
+
                 return html
 
     async def close_client(self):

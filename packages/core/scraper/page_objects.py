@@ -60,11 +60,18 @@ class XPathPage(BasicPage):
 
 class JsonPage(BasicPage):
 
+    def __init__(self, *args, raw_json_data=None, **kwargs):
+        self._raw_data = raw_json_data
+        super().__init__(*args, **kwargs)
+
     @property
     def state(self):
         if not hasattr(self, '_state'):
-            self._state = resolve_preload_stage(
-                self._selectors,
-                get_preload_state(self._raw_html)
-            )
+            self._state = resolve_preload_stage(self._selectors, self.raw_data)
         return self._state
+
+    @property
+    def raw_data(self):
+        if not self._raw_data:
+            self._raw_data = get_preload_state(self._raw_html)
+        return self._raw_data
