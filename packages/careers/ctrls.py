@@ -50,7 +50,7 @@ class CoursesScraper(CtrlPyppetterScraper):
         courses = CareersCoursesPage(html, url, raw_json_data=raw_json_data)
         logger.info(f"Saving data from {url}")
         for properties in courses.resolve():
-            logger.debug(f"Get or create Course {properties['title']}")
-            course, _ = await Course.get_or_create(**properties)
+            logger.debug(f"Update or create Course {properties['title']}")
+            course, _ = await Course.update_or_create(**properties)
             logger.info(f"Linked course({course}) to career({career}) ")
             await course.careers.add(career)

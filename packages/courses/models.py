@@ -22,13 +22,16 @@ class Course(Model):
         raise NotImplementedError
     
     @classmethod
-    async def get_or_create(cls, external_id, **kwargs)-> Tuple[Type[COURSE], bool]:
+    async def update_or_create(cls, external_id, **kwargs)-> Tuple[Type[COURSE], bool]:
         try:
             course = await cls.get(external_id=external_id)
-            return course, False
         except DoesNotExist:
             course = await cls.create(external_id=external_id, **kwargs)
             return course, True
+
+        course.update_from_dict(kwargs)
+        await course.save()
+        return course, False
 
     def __str__(self):
         return f"Course({self.title})"
