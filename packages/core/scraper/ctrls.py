@@ -4,6 +4,7 @@ import os
 
 from packages.core.utils.web_client import WebClient
 from packages.my_pyppeteer.ctrls import MyPyppeteer
+from pyppeteer.errors import NetworkError
 
 logger = logging.getLogger('log_print')
 
@@ -91,6 +92,14 @@ class CtrlPyppetterScraper:
             if not self.running_client:
                 self.running_client = True
                 await self.client.init_pool_pages(self.number_pages)
+    
+    async def clean_cookies(self, page):
+        """Clean cookies"""
+        cookies = await page.cookies()
+        await page.deleteCookie(*cookies)
+    
+    def _is_a_bot_page(self, html):
+        return ('<title>Please Wait...' in html) or ('Maintance-logo' in html)
 
     async def visit_page(self, url:str, js_callback=None):
         """
@@ -98,31 +107,33 @@ class CtrlPyppetterScraper:
 
         Visit the url and return the body html
         """
-        while True:
+        reload = True
+        while reload:
             async with self.sem:
                 logger.debug(f'Visit to page {url}')
                 page_id, page = self.client.get_page_pool()
-                cookies = await page.cookies()
-                await page.deleteCookie(*cookies)
-                await page.goto(url, options={'waitUntil':'domcontentloaded'})
-                html = await page.content()
                 await asyncio.sleep(0.5)
+                try:
+                    await self.clean_cookies(page)
+                    await page.goto(url, options={'waitUntil':'domcontentloaded'})
+                    html = await page.content()
+                    reload = self._is_a_bot_page(html)
 
-                if  ('<title>Please Wait...' in html) or ('Maintance-logo' in html):
-                    self.client.close_page_pool(page_id)
-                    logger.warning(f'Reloading {url}...')
-                    await asyncio.sleep(self.number_pages)
-                    continue
-                
-                if js_callback:
-                    callback_response = await page.evaluate(js_callback)
+                    if not reload and js_callback:
+                        callback_response = await page.evaluate(js_callback)
+                except NetworkError as e:
+                    logger.warning(f'Network error {e} on {url} using {page}')
 
                 self.client.close_page_pool(page_id)
 
-                if js_callback:
-                    return html, callback_response
+                if reload:
+                    logger.warning(f'Reloading {url}...')
+                    await asyncio.sleep(self.number_pages)
 
-                return html
+        if js_callback:
+            return html, callback_response
+
+        return html
 
     async def close_client(self):
         """Close pool tabs"""
