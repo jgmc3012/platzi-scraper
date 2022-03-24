@@ -21,8 +21,8 @@ class CoursesScraper(CtrlPyppetterScraper):
 
     async def update_courses(self, course: Course):
         url = self.URL_BASE + course.path
-        html = await self.visit_page(url)
-        courses = CoursesPage(html, url)
+        html, json_data = await self.visit_page(url, '_ => window.__PRELOADED_STATE__')
+        courses = CoursesPage(html, url, raw_json_data=json_data)
         logger.info(f"Saving data from {url}")
         properties = courses.resolve()
         lessons_props = properties.pop('lessons')
