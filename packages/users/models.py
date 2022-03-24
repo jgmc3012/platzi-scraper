@@ -16,6 +16,22 @@ class User(Model):
 
     def __str__(self):
         return self.username
+    
+    @classmethod
+    async def update_or_create(cls, username: str, **kwargs) -> Tuple[USER, bool]:
+        logger.debug(f"Update or create User {username}")
+        try:
+            user = await cls.get(username=username)
+        except DoesNotExist:
+            try:
+                user = await cls.create(username=username, **kwargs)
+                return user, True
+            except IntegrityError as err:
+                logger.error(f"{err} - Cant Create User ({username})")
+                return None, False
+
+        await user.update_from_dict(kwargs).save()
+        return user, False
 
     @classmethod
     async def get_or_create(cls, username: str, **kwargs) -> Tuple[Type[USER], bool]:

@@ -1,10 +1,12 @@
 from logging import getLogger
+from typing import Tuple, Type, TypeVar
 
 from tortoise import fields
 from tortoise.exceptions import DoesNotExist, IntegrityError
 from tortoise.models import Model
 
 logger = getLogger('log_print')
+COMMENT = TypeVar("COMMENT", bound="Comment")
 
 
 class Comment(Model):
@@ -23,23 +25,17 @@ class Comment(Model):
         return f'Comment({self.author}: {self.content[:20]}...)'
 
     @classmethod
-    async def get_or_create(cls, lesson, author, content, likes, external_id, father=None):
-        logger.debug(f"Get or create Comment by {author}")
-
+    async def update_or_create(cls, external_id, **kwargs) -> Tuple[Type[COMMENT], bool]:
+        logger.debug(f"Update or create Comment by {kwargs.get('author', external_id)}")
         try:
-            comment = await cls.get(lesson=lesson, external_id=external_id)
-            return comment, False
+            comment = await cls.get(external_id=external_id)
         except DoesNotExist:
-            pass
+            try:
+                comment = await cls.create(external_id=external_id, **kwargs)
+                return comment, True
+            except IntegrityError as err:
+                logger.error(f"{err} - Cant Create Comment ({kwargs.get('author', external_id)})")
+                return None, False
 
-        try:
-            comment = await cls.create(
-                lesson=lesson, author=author, content=content,
-                likes=likes, external_id=external_id, father=father
-            )
-        except IntegrityError as err:
-            logger.error(f"{err} - Cant Create Comment ({author})")
-            return None, False
-
-        logger.debug(f"{comment} created")
-        return comment, True
+        await comment.update_from_dict(kwargs).save()
+        return comment, False

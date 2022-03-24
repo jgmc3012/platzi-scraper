@@ -1,20 +1,21 @@
+import imp
 from logging import getLogger
-from packages.core.scraper.page_objects import XPathPage
-from packages.core.utils.datetime import str_to_seg
+
+from packages.core.scraper.page_objects import JsonPage
+from packages.users.utils import get_username_from_avatar
+
+from .utils import str_to_datetime
 
 logger = getLogger('log_print')
 
 
-class LessonsPage(XPathPage):
+class LessonsPage(JsonPage):
 
-    @property
-    def titles(self):
-        return self._get_property('titles')
-
-    @property
-    def paths(self):
-        return self._get_property('paths')
-
-    @property
-    def durations(self):
-        return map(str_to_seg, self._get_property('durations'))
+    def resolve(self):
+        comments = self.state
+        for comment in comments:
+            comment['writed_at'] = str_to_datetime(comment['writed_at'])
+            comment['author'] = get_username_from_avatar(comment['author'])
+        return {
+            'comments': comments
+        }

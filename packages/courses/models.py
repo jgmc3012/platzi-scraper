@@ -4,6 +4,7 @@ from tortoise.models import Model
 from tortoise import fields
 from tortoise.exceptions import DoesNotExist, IntegrityError
 from typing import Tuple, Type, TypeVar
+from datetime import datetime
 
 COURSE = TypeVar("COURSE", bound="Course")
 logger = getLogger('log_print')
@@ -18,9 +19,10 @@ class Course(Model):
     external_id = fields.CharField(50, unique=True)
     type = fields.CharField(max_length=50, null=True)
 
-    async def actives(self):
-        raise NotImplementedError
-    
+    @classmethod
+    async def actives(cls):
+        return await cls.filter(release__lte=datetime.now())
+
     @classmethod
     async def update_or_create(cls, external_id, **kwargs)-> Tuple[Type[COURSE], bool]:
         logger.debug(f"Update course {kwargs.get('title', external_id)}")

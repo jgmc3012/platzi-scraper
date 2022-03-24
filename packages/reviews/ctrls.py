@@ -4,6 +4,7 @@ from logging import getLogger
 from more_itertools import chunked
 from packages.core.scraper.ctrls import CtrlPyppetterScraper
 from packages.users.models import User
+from packages.users.utils import get_username_from_profile_path
 from packages.courses.models import Course
 
 from .models import Review
@@ -55,7 +56,7 @@ class ReviewsScraper(CtrlPyppetterScraper):
             logger.warning(f"Review this page: {url}")
 
         for row in zip(reviews.user_profiles, reviews.bodies, reviews.stars):
-            username = self.get_username_from_profile_path(row[0])
+            username = get_username_from_profile_path(row[0])
 
             user, _ = await User.get_or_create(username=username)
             await Review.get_or_create(
@@ -64,9 +65,3 @@ class ReviewsScraper(CtrlPyppetterScraper):
                 comment=row[1],
                 stars=row[2]
             )
-
-    def get_username_from_profile_path(self, path_profile:str):
-        """
-        Transform "/p/bmazariegos/" to "bmazariegos"
-        """
-        return path_profile[3:-1]

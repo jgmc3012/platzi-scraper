@@ -8,9 +8,9 @@ class AllCommands:
 
     class Scraper(Command):
         """
-        Scraper platzi lessons
+        Get all information about lessons
 
-        lessons:scraper
+        lessons:link_comments
         """
 
         def handle(self):

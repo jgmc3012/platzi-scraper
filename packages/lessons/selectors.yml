@@ -1,9 +1,28 @@
-titles:
-  multiple: True
-  xpath: "//div[@class='Tabs']//div[@class='ContentClass-item-content']/h5/text()"
-paths:
-    multiple: True
-    xpath: "//a[@class='LearningPathItem']/@href"
-durations:
-    multiple: True
-    xpath: "//div[@class='Tabs']//div[@class='ContentClass-item']/a/@href"
+multiple: true
+path: 'community.contributions.cards'
+attributes:
+  author:
+    multiple: false
+    path: author
+    attributes:
+      role:
+        multiple: false
+        path: role
+      avatar:
+        multiple: false
+        path: avatar
+      name:
+        multiple: false
+        path: name
+  likes:
+    multiple: false
+    path: nLikes
+  writed_at:
+    multiple: false
+    path: timestamp
+  content:
+    multiple: false
+    path: content
+  external_id:
+    multiple: false
+    path: id
