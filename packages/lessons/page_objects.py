@@ -1,4 +1,3 @@
-import imp
 from logging import getLogger
 
 from packages.core.scraper.page_objects import JsonPage

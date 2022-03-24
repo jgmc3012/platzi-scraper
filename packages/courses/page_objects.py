@@ -25,7 +25,7 @@ class CoursesPage(JsonPage):
             course['teacher']['role'] = 'teacher'
 
             lessons = reduce((lambda memo, cap: memo + cap['lessons']), course.pop('captions'), [])
-            course['lessons'] = filter(lambda lesson: bool(lesson.get('id')), lessons)
+            course['lessons'] = tuple(filter(lambda lesson: bool(lesson.get('external_id')), lessons))
             for index, lesson in enumerate(course['lessons']):
                 lesson['track_number'] = index + 1
             self._course = course

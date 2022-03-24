@@ -81,7 +81,6 @@ def _go_to_path(path: list, hash: dict) -> Union[str, int, dict, list]:
             response = response[key]
         except KeyError:
             msg = f'Invalid path: {path} in {hash} with key: {key}'
-            logger.error(msg)
             raise InvalidPath(msg)
 
     return response
