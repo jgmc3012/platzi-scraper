@@ -13,7 +13,7 @@ logger = getLogger('log_print')
 class Lesson(Model):
     id = fields.IntField(pk=True)
     track_number = fields.IntField()
-    title = fields.CharField(max_length=100, unique=True)
+    title = fields.CharField(max_length=200)
     path = fields.CharField(max_length=150, unique=True)
     course = fields.ForeignKeyField('courses.Course', related_name='lessons')
     duration_in_seg = fields.IntField()

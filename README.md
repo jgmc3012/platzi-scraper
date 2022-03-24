@@ -33,3 +33,7 @@ exec `./init.local.sh run --rm scraper` and afert `./console.py`.
 
 # Login on Database
 `psql -U $POSTGRES_USER -h $POSTGRES_HOST -d $POSTGRES_DB -W`
+
+# Migrations
+- Create file
+- run `aerich upgrade`

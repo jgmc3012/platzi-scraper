@@ -30,7 +30,7 @@ class CoursesScraper(CtrlPyppetterScraper):
         properties['teacher'], _ = await User.get_or_create(**properties['teacher'])
         course, _ = await Course.update_or_create(**properties)
 
-        lessons_props = map(lambda x: x.update({'course': course}), lessons_props)
+        lessons = map(lambda x: {**x,'course': course}, lessons_props)
         await asyncio.gather(*(
-            Lesson.update_or_create(**properties) for properties in lessons_props
+            Lesson.update_or_create(**props) for props in lessons
         ))
