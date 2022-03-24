@@ -8,6 +8,7 @@ APPS = [
     'users',
     'lessons',
     'reviews',
+    'comments'
 ]
 
 THIRD_PARTY_APPS = [

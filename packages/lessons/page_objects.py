@@ -14,7 +14,7 @@ class LessonsPage(JsonPage):
         comments = self.state
         for comment in comments:
             comment['writed_at'] = str_to_datetime(comment['writed_at'])
-            comment['author'] = get_username_from_avatar(comment['author'])
+            comment['author']['username'] = get_username_from_avatar(comment['author'].pop('avatar'))
         return {
             'comments': comments
         }

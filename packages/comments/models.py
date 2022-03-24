@@ -13,8 +13,6 @@ class Comment(Model):
 
     id = fields.IntField(pk=True)
     lesson = fields.ForeignKeyField('lessons.Lesson', related_name='comments')
-    father = fields.ForeignKeyField(
-        'comments.Comment', related_name='chilldrens')
     author = fields.ForeignKeyField('users.User', related_name='comments')
     content = fields.TextField()
     writed_at = fields.DatetimeField()

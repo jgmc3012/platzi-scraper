@@ -11,7 +11,7 @@ def get_username_from_avatar(avatar_url:str):
     """
     Transform "https://static.platzi.com/media/avatars/alan-isaac_vazquez_807714c1-eccc-4a11-8fd2-780569392832" to "alan-isaac_vazquez"
     """
-    match = re.search(r'avatars/(.*)_.*', avatar_url)
+    match = re.match(r'.*/(.*)_.*', avatar_url)
     if match:
         return match.group(1)
 
