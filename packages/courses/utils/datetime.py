@@ -10,4 +10,7 @@ def str_to_datetime(string: str)-> datetime:
     Returns:
         struct_time: datetime
     """
-    return datetime.strptime(string, '%Y-%m-%dT%H:%M:%SZ')
+    try:
+        return datetime.strptime(string, '%Y-%m-%dT%H:%M:%SZ')
+    except ValueError:
+        return datetime.strptime(string, '%Y-%m-%dT%H:%M:%S.%fZ')
