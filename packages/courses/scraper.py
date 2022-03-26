@@ -1,7 +1,7 @@
 import asyncio
 from logging import getLogger
 
-from packages.core.scraper.ctrls import CtrlPyppetterScraper
+from packages.core.scraper.web_clients import PyppetterWebClient
 from packages.users.models import User
 from packages.lessons.models import Lesson
 
@@ -11,7 +11,7 @@ from .page_objects import CoursesPage
 logger = getLogger('log_print')
 
 
-class CoursesScraper(CtrlPyppetterScraper):
+class CoursesScraper(PyppetterWebClient):
 
     async def run(self):
         await self.init_client()

@@ -1,7 +1,7 @@
 from cleo import Command
 from packages.core.utils.app_loop import AppLoop
 
-from .ctrls import CategoriesScraper
+from .scraper import CategoriesScraper
 
 class AllCommands:
 

@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from packages.categories.models import Category
-from packages.core.scraper.ctrls import CtrlPyppetterScraper
+from packages.core.scraper.web_clients import PyppetterWebClient
 from packages.courses.models import Course
 
 from .models import Career
@@ -12,7 +12,7 @@ from .page_objects.courses.page import CareersCoursesPage
 logger = logging.getLogger('log_print')
 
 
-class CareersScraper(CtrlPyppetterScraper):
+class CareersScraper(PyppetterWebClient):
 
     async def run(self):
         categories = await Category.all()
@@ -34,7 +34,7 @@ class CareersScraper(CtrlPyppetterScraper):
                 category=category,
             )
 
-class CoursesScraper(CtrlPyppetterScraper):
+class CoursesScraper(PyppetterWebClient):
 
     async def run(self):
         await self.init_client()

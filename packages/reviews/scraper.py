@@ -2,7 +2,7 @@ import asyncio
 from logging import getLogger
 
 from more_itertools import chunked
-from packages.core.scraper.ctrls import CtrlPyppetterScraper
+from packages.core.scraper.web_clients import PyppetterWebClient
 from packages.users.models import User
 from packages.users.utils import get_username_from_profile_path
 from packages.courses.models import Course
@@ -13,7 +13,7 @@ from .page_objects import ReviewsPage
 logger = getLogger('log_print')
 
 
-class ReviewsScraper(CtrlPyppetterScraper):
+class ReviewsScraper(PyppetterWebClient):
     REVIEWS_PER_PAGE = 30
 
     async def run(self):

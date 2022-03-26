@@ -9,7 +9,7 @@ from pyppeteer.errors import NetworkError
 logger = logging.getLogger('log_print')
 
 
-class CtrlBaseScraper:
+class BaseWebCLient:
     WORK_DIR = os.getcwd()
 
     client = WebClient()
@@ -72,7 +72,7 @@ class CtrlBaseScraper:
             f.write(html)
 
 
-class CtrlPyppetterScraper:
+class PyppetterWebClient:
     WORK_DIR = os.getcwd()
 
     

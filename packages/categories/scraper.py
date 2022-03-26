@@ -1,6 +1,6 @@
 import logging
 
-from packages.core.scraper.ctrls import CtrlPyppetterScraper
+from packages.core.scraper.web_clients import PyppetterWebClient
 
 from .models import Category
 from .page_objects import CategoriesPage
@@ -8,7 +8,7 @@ from .page_objects import CategoriesPage
 logger = logging.getLogger('log_print')
 
 
-class CategoriesScraper(CtrlPyppetterScraper):
+class CategoriesScraper(PyppetterWebClient):
 
     async def run(self):
         await self.init_client()

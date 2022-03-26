@@ -2,7 +2,7 @@ import asyncio
 import logging
 
 from packages.comments.models import Comment
-from packages.core.scraper.ctrls import CtrlPyppetterScraper
+from packages.core.scraper.web_clients import PyppetterWebClient
 from packages.users.models import User
 
 from .models import User
@@ -11,7 +11,7 @@ from .page_objects import UsersPage
 logger = logging.getLogger('log_print')
 
 
-class UserScraper(CtrlPyppetterScraper):
+class UserScraper(PyppetterWebClient):
 
     async def run(self):
         await self.init_client()
