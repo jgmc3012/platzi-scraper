@@ -24,7 +24,7 @@ setx BROWSER_IP "127.0.0.1"
 
 Launch Browser
 ```sh
-# Use python 3.8(equal dockerfile)
+# Use python 3.8(equal to dockerfile)
 python console.py  pyppeteer:open_browser --gui
 ```
 

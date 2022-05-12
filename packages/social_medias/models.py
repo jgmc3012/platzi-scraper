@@ -16,9 +16,9 @@ class SocialMedia(Model):
 
 class SocialMediaProfile(Model):
     id = fields.IntField(pk=True)
-    social_media = fields.ForeignKeyField(SocialMedia, related_name='profiles')
+    social_media = fields.ForeignKeyField('social_medias.SocialMedia', related_name='profiles')
     username = fields.CharField(max_length=100)
-    user = fields.ForeignKeyField('users.User', related_name='social_medias')
+    user = fields.ForeignKeyField('users.User')
     external_id = fields.CharField(max_length=100)
 
     @classmethod
