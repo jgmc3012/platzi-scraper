@@ -14,11 +14,11 @@ If you are using WSL see the next [post](https://virtualizationreview.com/articl
 Export required vars
 ```sh
 # For UNIX
-export DATABASE_URL=''
+export DATABASE_URL='postgres://user:pass@postgres:5432/database'
 export BROWSER_IP='127.0.0.1'
 
 # For Windows(CMD) - Create vars and reset CMD
-setx DATABASE_URL "anything"
+setx DATABASE_URL "postgres://user:pass@postgres:5432/database"
 setx BROWSER_IP "127.0.0.1"
 ```
 
