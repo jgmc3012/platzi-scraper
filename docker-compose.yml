@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  browser:
+    build:
+      context: ./browser
+    image: platzi_scraper_browser
+    volumes:
+      - ./browser:/app
+    environment:
+      - BROWSER_IP=host.docker.internal
