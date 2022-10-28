@@ -1,5 +1,5 @@
 import {Command, Flags} from '@oclif/core'
-import { launch } from 'puppeteer'
+import { new_puppetter } from '../packages/my_puppetter/main'
 
 export default class Open extends Command {
   static description = 'Open Browser'
@@ -20,11 +20,10 @@ export default class Open extends Command {
   public async run(): Promise<void> {
     const {args, flags} = await this.parse(Open)
 
-    const browser = await launch({executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox']});
-    const page = await browser.newPage();
+    let puppetter = await new_puppetter()
+    const page = await puppetter.browser.newPage();
     await page.goto('https://platzi.com/clases/1669-pentesting/22415-instalacion-y-configuracion-de-maquinas-virtuales-/');
     await page.screenshot({path: 'google.png'});
-    
-    await browser.close();
+    await puppetter.browser.close();
   }
 }
